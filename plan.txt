@@ -1,6 +1,6 @@
 0. sprawdzić jak działa sprawdzarka:
 	- stowrzyć rozwiązanie
-1. stworzyć funkcję, która z wektora bibliotek zapisze rozwiązanie w wymaganym formacie
+1. stworzyć funkcję, która z wektora bibliotek zapisze rozwiązanie w wymaganym formacie (W TRAKCIE)
 3. stworzyć evaluation function dla danej biblioteki oraz edytować program wcztujący dane tak,
 	żeby zapisywał wszytkie ważne charakterystyczne cechy danej biblioteki w jakiejś stukturze lub objekcie
 4. stworzyć funkcję, która na podstawie evaluation danych bibliotek będzie dokonywała wstępnej selekcji i tworzyła wstępną populację rozwiązań
