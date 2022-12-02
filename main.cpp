@@ -27,11 +27,13 @@ struct library
     vector<book>books;
 };
 
-void printSolution(library* genotype[],int LenGenotype,int D)
+void printSolution(library* genotype[],int LenGenotype,int D, int B)
 {
 	int M, T, N, RemainingDaysForScanningInThisLiblary, bookIterator, RemainingBooksInLiblarary;
 	book Thebook;
 	vector<int>ScanningQueueOfTheLiblary;
+	//unordered_set<book> scanned;
+	bool scanned[B] = { false };
 	
 	cout<<LenGenotype<<endl;
 	for(int i = 0; i<LenGenotype; ++i)
@@ -46,8 +48,14 @@ void printSolution(library* genotype[],int LenGenotype,int D)
 			{
 				Thebook = genotype[i]->books[bookIterator];
 				//if book not in scanned
+				//if (scanned.contains(Thebook) == false)
+				if(scanned[Thebook.ID] == false)
+				{
 					ScanningQueueOfTheLiblary.push_back(Thebook.ID);
 					//add to scanned
+					//scanned.insert(Thebook)
+					scanned[Thebook.ID] = true;
+				}
 				RemainingBooksInLiblarary--;
 				bookIterator++;
 				if(RemainingBooksInLiblarary == 0)
@@ -81,7 +89,7 @@ int main(int argc, char** argv){
 	library* genotype[100000];
 
     if(argc < 2){
-        fprintf(stderr, "Too few arguments!\nCorrect command: ./solution_test [instance] [solution]\n");
+        fprintf(stderr, "Too few arguments!\nCorrect command: ./main.cpp [instance]\n");
         return 1;
     }
 
@@ -123,19 +131,21 @@ int main(int argc, char** argv){
 			b->score = score;
             libs[i].books.push_back(*b); //deep or shallow copy?
         }
-		//???
-        sort(libs[i].books.begin(), libs[i].books.end(), compare2books);
         
+        sort(libs[i].books.begin(), libs[i].books.end(), compare2books);
+        /*	to chect if is sorts correctly (it does)
         for(int k = 0; k < libs[i].books.size(); ++k)
 		{
 			cout<<libs[i].books[k].ID<<"-"<<libs[i].books[k].score<<" ";
 		}
 		cout<<endl;
+        */
         
+        //temporary:
         genotype[i] = &libs[i];
     }
     
-    printSolution(genotype,L,D);
+    printSolution(genotype,L,D,B);
     
     fclose(instance);
     return 0;
