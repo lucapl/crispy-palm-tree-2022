@@ -1,14 +1,15 @@
 #ifndef LIBRARY_HPP_
 #define LIBRARY_HPP_
 #include <iostream>
+#include <vector>
 
 typedef int book;//book as value
 
 class Library{
     private:
-        book* books;
+        std::vector<book>* books;
         int time;
-        int max_scanned_;
+        int max_scanned;
     public:
         Library(){}
         ~Library(){}
