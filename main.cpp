@@ -27,53 +27,93 @@ struct library
     vector<book>books;
 };
 
-void printSolution(library* genotype[],int LenGenotype,int D, int B)
+
+class Genome
 {
-	int M, T, N, RemainingDaysForScanningInThisLiblary, bookIterator, RemainingBooksInLiblarary;
-	book Thebook;
-	vector<int>ScanningQueueOfTheLiblary;
-	//unordered_set<book> scanned;
-	bool scanned[B] = { false };
-	
-	cout<<LenGenotype<<endl;
-	for(int i = 0; i<LenGenotype; ++i)
-	{
-		bookIterator = 0;
-		D -= genotype[i]->T;
-		RemainingDaysForScanningInThisLiblary = D;
-		RemainingBooksInLiblarary = genotype[i]->N;
-		while(RemainingDaysForScanningInThisLiblary>0&&RemainingBooksInLiblarary>0)
+	public:
+		library* genotype[100000];
+		int LenGenotype;
+		int evaluation;
+		
+		void printSolution(int D, int B)	//used only for printing the final solution into standard output
 		{
-			for(int j = M;M>=0;--j)
+			int M, T, N, RemainingDaysForScanningInThisLiblary, bookIterator, RemainingBooksInLiblarary;
+			book Thebook;
+			vector<int>ScanningQueueOfTheLiblary;
+			bool scanned[B] = { false };
+			
+			cout<<LenGenotype;
+			
+			for(int i = 0; i<LenGenotype; ++i)
 			{
-				Thebook = genotype[i]->books[bookIterator];
-				//if book not in scanned
-				//if (scanned.contains(Thebook) == false)
-				if(scanned[Thebook.ID] == false)
+				bookIterator = 0;
+				D -= genotype[i]->T;
+				RemainingDaysForScanningInThisLiblary = D;
+				RemainingBooksInLiblarary = genotype[i]->N;
+				while(RemainingDaysForScanningInThisLiblary>0&&RemainingBooksInLiblarary>0)
 				{
-					ScanningQueueOfTheLiblary.push_back(Thebook.ID);
-					//add to scanned
-					//scanned.insert(Thebook)
-					scanned[Thebook.ID] = true;
+					for(int j = M;M>=0;--j)
+					{
+						Thebook = genotype[i]->books[bookIterator];
+						if(scanned[Thebook.ID] == false)
+						{
+							ScanningQueueOfTheLiblary.push_back(Thebook.ID);
+							scanned[Thebook.ID] = true;
+						}
+						RemainingBooksInLiblarary--;
+						bookIterator++;
+						if(RemainingBooksInLiblarary == 0)
+						{
+							break;
+						}
+					}
+					RemainingDaysForScanningInThisLiblary--;
 				}
-				RemainingBooksInLiblarary--;
-				bookIterator++;
-				if(RemainingBooksInLiblarary == 0)
+				cout<<endl<<genotype[i]->ID<<" "<<ScanningQueueOfTheLiblary.size()<<endl;
+				for(int k = 0; k < ScanningQueueOfTheLiblary.size(); ++k)
 				{
-					break;
+					cout<<ScanningQueueOfTheLiblary[k]<<" ";
+				}
+				ScanningQueueOfTheLiblary.clear();
+			}
+		}
+		void evaluate(int D, int B) /*will be usefull for genetic algorithm (will add evaluation value for particular genotype).
+		the evaluation value should be the same as the final score, if this genotype will be choosen as a solution (if D and B are correct)*/
+		{
+			int M, T, N, RemainingDaysForScanningInThisLiblary, bookIterator, RemainingBooksInLiblarary;
+			int finalScore = 0;
+			book Thebook;
+			bool scanned[B] = { false };
+			
+			for(int i = 0; i<LenGenotype; ++i)
+			{
+				bookIterator = 0;
+				D -= genotype[i]->T;
+				RemainingDaysForScanningInThisLiblary = D;
+				RemainingBooksInLiblarary = genotype[i]->N;
+				while(RemainingDaysForScanningInThisLiblary>0&&RemainingBooksInLiblarary>0)
+				{
+					for(int j = M;M>=0;--j)
+					{
+						Thebook = genotype[i]->books[bookIterator];
+						if(scanned[Thebook.ID] == false)
+						{
+							finalScore += Thebook.score;
+							scanned[Thebook.ID] = true;
+						}
+						RemainingBooksInLiblarary--;
+						bookIterator++;
+						if(RemainingBooksInLiblarary == 0)
+						{
+							break;
+						}
+					}
+					RemainingDaysForScanningInThisLiblary--;
 				}
 			}
-			RemainingDaysForScanningInThisLiblary--;
+		this->evaluation = finalScore;
 		}
-		cout<<genotype[i]->ID<<" "<<ScanningQueueOfTheLiblary.size()<<endl;
-		for(int k = 0; k < ScanningQueueOfTheLiblary.size(); ++k)
-		{
-			cout<<ScanningQueueOfTheLiblary[k]<<" ";
-		}
-		cout<<endl;
-		ScanningQueueOfTheLiblary.clear();
-	}
-}
+};
 
 bool compare2books(book a, book b)
 {
@@ -86,8 +126,8 @@ static bool visited[100000];
 
 int main(int argc, char** argv){
 	
-	library* genotype[100000];
-
+	Genome solutionGenotype;
+	
     if(argc < 2){
         fprintf(stderr, "Too few arguments!\nCorrect command: ./main.cpp [instance]\n");
         return 1;
@@ -110,7 +150,7 @@ int main(int argc, char** argv){
         book_scores_sum += book_scores[i];
     }
 
-    printf("Theoretical upper bound: %lli\n", book_scores_sum);
+    //printf("Theoretical upper bound: %lli\n", book_scores_sum);
 
     for(int i = 0; i < L; ++i){
         int N, T, M;
@@ -142,10 +182,16 @@ int main(int argc, char** argv){
         */
         
         //temporary:
-        genotype[i] = &libs[i];
+        
+        
+        
+        solutionGenotype.genotype[i] = &libs[i];
     }
     
-    printSolution(genotype,L,D,B);
+    solutionGenotype.LenGenotype = L;
+    solutionGenotype.printSolution(D,B);
+    solutionGenotype.evaluate(D,B);
+    //cout<<"this solution score: "<<solutionGenotype.evaluation<<endl;
     
     fclose(instance);
     return 0;
