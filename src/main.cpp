@@ -27,6 +27,49 @@ struct library
     vector<book>books;
 };
 
+class Clustering
+{
+	public:
+		/*
+		Clculates distance between two liblaries with worst case time complexity a+b,
+		where:
+		a = number of books in liblary A
+		b = number of books in liblary B
+		both liblaries need to have their books sorted
+		*/
+		float distance(library* A, library* B)
+		{
+			int SimmilarBooks = 0;
+			int a = 0;
+			int b = 0;
+			int Abook;
+			int Bbook;
+			while(a<A->N&&b<B->N)
+			{
+				Abook = A->books[a].ID;
+				Bbook = B->books[b].ID;
+				if(Abook == Bbook)
+				{
+					++a;
+					++b;
+					++SimmilarBooks;
+				}
+				else if(Abook > Bbook)
+				{
+					++b;
+				}
+				else
+				{
+					++a;
+				}
+			}
+		//this is formula proposed by me:
+		float intersectionCardinality = SimmilarBooks;
+		float unionCardinality = A->N + B->N - SimmilarBooks;
+		float simmilarity = intersectionCardinality/unionCardinality;
+		return 1.0 - simmilarity;
+		}
+};
 
 class Genome
 {
@@ -187,6 +230,9 @@ int main(int argc, char** argv){
         
         solutionGenotype.genotype[i] = &libs[i];
     }
+    //used for testing distnce function:
+    Clustering cluster;
+    cout<<"distance between lib 0 and lib 1: "<<cluster.distance(&libs[0],&libs[1])<<endl;
     
     solutionGenotype.LenGenotype = L;
     solutionGenotype.printSolution(D,B);
