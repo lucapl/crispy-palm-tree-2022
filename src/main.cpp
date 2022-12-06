@@ -158,9 +158,13 @@ class Genome
 		}
 };
 
-bool compare2books(book a, book b)
+bool compareByScore(book a, book b)
 {
 	return a.score > b.score;
+}
+bool compareByID(book a, book b)
+{
+	return a.ID < b.ID;
 }
 
 static library libs[100000];
@@ -215,7 +219,7 @@ int main(int argc, char** argv){
             libs[i].books.push_back(*b); //deep or shallow copy?
         }
         
-        sort(libs[i].books.begin(), libs[i].books.end(), compare2books);
+        sort(libs[i].books.begin(), libs[i].books.end(), compareByID);
         /*	to chect if is sorts correctly (it does)
         for(int k = 0; k < libs[i].books.size(); ++k)
 		{
@@ -230,9 +234,15 @@ int main(int argc, char** argv){
         
         solutionGenotype.genotype[i] = &libs[i];
     }
+    solutionGenotype.LenGenotype = L;
+    solutionGenotype.printSolution(D,B);
     //used for testing distnce function:
     Clustering cluster;
     cout<<"distance between lib 0 and lib 1: "<<cluster.distance(&libs[0],&libs[1])<<endl;
+    for(int i = 0; i<L;i++)
+    {
+    sort(libs[i].books.begin(), libs[i].books.end(), compareByScore);
+	}
     
     solutionGenotype.LenGenotype = L;
     solutionGenotype.printSolution(D,B);
