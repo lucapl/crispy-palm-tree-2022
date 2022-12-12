@@ -1,11 +1,24 @@
 #include "solution.hpp"
 
+Solution::Solution(){
+
+}
+
 void Solution::setEvaluation(int eva){
     evaluation = eva;
 }
 
 int Solution::numberOfBooks(){
     return libraries.size();
+}
+
+void Solution::printSolution(int days,int books){
+    int A = libraries.size();// # of libraries to sign up - int A
+    std::cout<< A << '\n'
+
+    for(int i = 0; i < A; i++){
+
+    }
 }
 
 void Solution::printSolution(int D, int B)	//used only for printing the final solution into standard output

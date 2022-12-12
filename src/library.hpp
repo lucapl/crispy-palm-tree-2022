@@ -3,17 +3,23 @@
 #include <iostream>
 #include <vector>
 
-typedef int book;//book as value
-
 class Library{
     private:
-        std::vector<book>* books;
-        int time;
-        int max_scanned;
+        std::vector<int>* books; // vector of book ids, size of N
+        int time; // T
+        int maxScanned; // M
     public:
-        Library(){}
+        Library(int T,int M){}
         ~Library(){}
-        void scan(){}
+        //void scan(){}
+        int getN();
+        int getT();
+        int setT(int);
+        int getM();
+        int setM(int);
+        void sortBooks();
+
+        void addBook(int);
 };
 
 #endif
