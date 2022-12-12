@@ -1,6 +1,6 @@
 #include "libraries.hpp"
 
-static Library* generateData(){
+static Library* generateLibs(){
     Library** toReturn = new Library*[100000];
     for ( int i = 0; i < 100000; i++ ){
         toReturn[i] = new Library(-1,-1);
@@ -8,7 +8,7 @@ static Library* generateData(){
     return toReturn;
 }
 
-Libraries::libs = generateData();
+Libraries::libs = generateLibs();
 
 Library* Libraries::getLibByID(int index){
     return libs[index];

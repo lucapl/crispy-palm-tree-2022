@@ -1,4 +1,5 @@
 #include "library.hpp"
+#include <algorithm>
 
 Library::Library(int timeToScan,int maxScannedPerDay){
     time = timeToScan;
@@ -29,5 +30,9 @@ Library::getT(){
 }
 Library::getM(){
     return maxScanned;
+}
+
+void Library::sortBooks(bool (*f)(int,int)){
+    std::sort(books->begin(),books->end(),f);
 }
 

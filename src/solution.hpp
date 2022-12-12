@@ -5,13 +5,14 @@
 class Solution {
 	private:
 		std::vector<int>* libraries; //combination of libraries IDs
-		int* assignedIds; //array index = book id -> array value = library id 
+		int* assignedIds; //array index = book id -> array value = library id
+		int nOfBooks;
 		int evaluation; // value of a solution
 	public:
-		Solution();
+		Solution(int);
 		~Solution();
 		//std::string* toString();
-		int numberOfBooks();
+		int numberOfLibs();
 
 		void mutateLibs();
 		void mutateBooks();

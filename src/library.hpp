@@ -17,7 +17,7 @@ class Library{
         int setT(int);
         int getM();
         int setM(int);
-        void sortBooks();
+        void sortBooks(bool (*f)(int,int));
 
         void addBook(int);
 };

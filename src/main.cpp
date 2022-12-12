@@ -1,9 +1,8 @@
 //Command: ./solution_test [instance] //no more valid (idk how to run it)
-/*
+
 #include<cstdio>
 #include<vector>
 #include<algorithm>
-*/
 #include <bits/stdc++.h>
 #include "books.hpp"
 #include "libraries.hpp"
@@ -61,8 +60,9 @@ int main(int argc, char** argv){
             libs.addBook(i,id); // shallow copy
         }
         
-		Library* lib = libs.getLibById(i);
-        sort(lib->.begin(), lib.books.end(), compareByID);
+		libs.getLibById(i).sortBooks(compareByID);
+		//Library* lib = libs.getLibById(i);
+        //sort(lib->.begin(), lib.books.end(), compareByID);
         /*	to chect if is sorts correctly (it does)
         for(int k = 0; k < libs[i].books.size(); ++k)
 		{
@@ -73,7 +73,7 @@ int main(int argc, char** argv){
         
         //temporary:
         
-        
+    // i did not touch the code below   
         
         solutionGenotype.genotype[i] = &libs[i];
     }

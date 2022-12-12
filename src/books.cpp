@@ -1,6 +1,6 @@
 #include "books.hpp"
 
-static int* generateData(){
+static int* generateBooks(){
     int * toReturn = new int[100000];
     for ( int i = 0; i < 100000; i++ ){
         toReturn[i] = -1;
@@ -8,7 +8,7 @@ static int* generateData(){
     return toReturn;
 }
 
-Books::scores = generateData();
+Books::scores = generateBooks();
 
 int Books::getScore(int index){
     return scores[index];
