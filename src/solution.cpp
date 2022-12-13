@@ -1,4 +1,8 @@
 #include "solution.hpp"
+#include "books.hpp"
+#include "randomizer.hpp"
+#include <algorithm>
+#include <random>
 
 Solution::Solution(int aNOfBooks){
     nOfBooks = aNOfBooks;
@@ -16,55 +20,41 @@ void Solution::setEvaluation(int eva){
 int Solution::numberOfLibs(){
     return libraries.size();
 }
-
-void Solution::printSolution(int days,int books){
-    int A = libraries.size();// # of libraries to sign up - int A
+// params are D, B
+void Solution::printSolution(int nDays,int nBooks){ //used only for printing the final solution into standard output
+    int A = numberOfLibs();// # of libraries to sign up - int A
     std::cout<< A << '\n'
+    std::vector<int>* booksInLibs = new std::vector<int>[A];
 
-    // for(int i = 0; i < A; i++){
+    for(int bookId = 0; bookId < nBooks; bookId ++){
+        int libId = books[bookId]; // Id of the assigned library to a book
 
-    // }
+        if (libId < 0){ continue; } // skip the iteration if Id not valid
+        booksInLibs[libId].push_back(bookId);
+    }
+
+    Books allBooks = Books();
+
+    for(auto libId : *libraries){
+        std::vector<int>* booksInLib = &booksInLibs[libId];
+        std::cout << libId << booksInLib.size() << '\n'; // Y K
+        std::sort(booksInLib->begin(),booksInLib->end(),allBooks.compareByScore); //sort by score // this should be fine because the function is static
+        for(auto bookId : *booksInLib){
+            std::cout << bookId << ' '; // k_bookId
+        }
+        std::cout << '\n';
+    }
+    delete booksInLibs;
 }
 
-void Solution::printSolution(int D, int B)	//used only for printing the final solution into standard output
-{
-    int M, T, N, RemainingDaysForScanningInThisLiblary, bookIterator, RemainingBooksInLiblarary;
-    book Thebook;
-    vector<int>ScanningQueueOfTheLiblary;
-    bool scanned[B] = { false };
-    
-    cout<<LenGenotype;
-    
-    for(int i = 0; i<LenGenotype; ++i)
-    {
-        bookIterator = 0;
-        D -= genotype[i]->T;
-        RemainingDaysForScanningInThisLiblary = D;
-        RemainingBooksInLiblarary = genotype[i]->N;
-        while(RemainingDaysForScanningInThisLiblary>0&&RemainingBooksInLiblarary>0)
-        {
-            for(int j = M;M>=0;--j)
-            {
-                Thebook = genotype[i]->books[bookIterator];
-                if(scanned[Thebook.ID] == false)
-                {
-                    ScanningQueueOfTheLiblary.push_back(Thebook.ID);
-                    scanned[Thebook.ID] = true;
-                }
-                RemainingBooksInLiblarary--;
-                bookIterator++;
-                if(RemainingBooksInLiblarary == 0)
-                {
-                    break;
-                }
-            }
-            RemainingDaysForScanningInThisLiblary--;
-        }
-        cout<<endl<<genotype[i]->ID<<" "<<ScanningQueueOfTheLiblary.size()<<endl;
-        for(int k = 0; k < ScanningQueueOfTheLiblary.size(); ++k)
-        {
-            cout<<ScanningQueueOfTheLiblary[k]<<" ";
-        }
-        ScanningQueueOfTheLiblary.clear();
-    }
+void Solution::mutateLibs(){
+    Randomizer randomizer = Randomizer();
+    int n = numberOfLibs();
+    int i = randomizer.getRandomInt(0,n);
+    int j = randomizer.getRandomInt(0,n);
+
+    // swap libraries
+    int temp = libraries[i];
+    libraries[i] = libraries[j];
+    libraries[j] = temp;
 }

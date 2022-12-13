@@ -1,6 +1,6 @@
 #include "libraries.hpp"
 
-static Library* generateLibs(){
+static Library** generateLibs(){
     Library** toReturn = new Library*[100000];
     for ( int i = 0; i < 100000; i++ ){
         toReturn[i] = new Library(-1,-1);
