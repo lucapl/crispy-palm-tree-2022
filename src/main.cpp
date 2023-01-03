@@ -1,10 +1,9 @@
 #include<cstdio>
 #include<vector>
 #include<algorithm>
-#include <bits/stdc++.h>
+//#include <bits/stdc++.h>
 #include "books.hpp"
 #include "libraries.hpp"
-
 using namespace std;
 
 bool compareByScore(int a, int b){	
@@ -15,12 +14,12 @@ bool compareByID(int a, int b){
 	return a < b;
 }
 
-long long readBooks(Books* books,int nOfBooks){
+long long readBooks(Books* books,FILE* instance,int nOfBooks){
     long long scoresSum = 0;
     for(int i = 0; i < nOfBooks; ++i){
 		int score;
         fscanf(instance," %i", &score);
-		books.modify(i,score);
+		books->modify(i,score);
         scoresSum += score;
     }
     printf("Theoretical upper bound: %lli\n", scoresSum);
@@ -33,22 +32,22 @@ int main(int argc, char** argv){
 	Books books = Books();
 	Libraries libs = Libraries();
 
-    if(argc < 2){
-        std::stderr << "Too few arguments!\nCorrect command: ./$name$ [instance]\n";
+    if(argc < 1){
+        std::cerr << "Too few arguments!\nCorrect command: ./$name$ [instance]\n";
         return 1;
     }
-
-    FILE* instance = fopen(argv[1],"r");
+    string inst = "C:\\Users\\£ukasz\\Desktop\\studia\\3rd semester\\CO\\project\\vs\\CO_project\\repo\\instances\\a_example.txt";
+    FILE* instance = fopen(inst.c_str(), "r");
 
     if(!instance){
-        std::stderr << "Can't open " << argv[1] <<'\n';
+        std::cerr << "Can't open " << argv[1] <<'\n';
         return 1;
     }
 
     int nOfBooks, nOfLibraries, nOfDays; // B L D
     fscanf(instance," %i %i %i", &nOfBooks, &nOfLibraries, &nOfDays);
 
-    long long scoresSum = readBooks(&books,nOfBooks);
+    long long scoresSum = readBooks(&books,instance,nOfBooks);
     
 
     for(int i = 0; i < nOfLibraries; ++i){
@@ -63,7 +62,7 @@ int main(int argc, char** argv){
             libs.addBook(i,id); // shallow copy
         }
         
-		libs.getLibById(i).sortBooks(compareByID);
+		libs.getLibByID(i)->sortBooks(compareByID);
 		//Library* lib = libs.getLibById(i);
         //sort(lib->.begin(), lib.books.end(), compareByID);
         /*	to chect if is sorts correctly (it does)

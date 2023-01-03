@@ -9,15 +9,17 @@ class Library{
         int time; // T
         int maxScanned; // M
     public:
-        Library(int T,int M){}
-        ~Library(){}
+        Library(int T, int M);
+        ~Library();
         //void scan(){}
         int getN();
         int getT();
-        int setT(int);
+        void setT(int);
         int getM();
-        int setM(int);
+        void setM(int);
+
         void sortBooks(bool (*f)(int,int));
+        int getBookIDAt(int index);
 
         void addBook(int);
 };

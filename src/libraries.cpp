@@ -8,7 +8,7 @@ static Library** generateLibs(){
     return toReturn;
 }
 
-Libraries::libs = generateLibs();
+Library** Libraries::libs = generateLibs();
 
 Library* Libraries::getLibByID(int index){
     return libs[index];
@@ -20,10 +20,10 @@ void Libraries::modifyLib(int id,int aTime, int aMaxScanned){
 }
 
 void Libraries::addBook(int libId,int bookId){
-    libs[libId]->push_back(bookId);
+    libs[libId]->addBook(bookId);
 }
 
-static void Libraries::clear(){
+void Libraries::clear(){
     for(int i = 0; i < 100000; i++){
         delete libs[i];
     }

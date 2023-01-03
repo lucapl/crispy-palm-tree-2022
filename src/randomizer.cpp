@@ -28,3 +28,11 @@ Int Randomizer::getRandomInt(Int a, Int b) {
     std::uniform_int_distribution<Int> dist(a, b);
     return dist(generator);
 }
+
+Randomizer::Randomizer() {}
+
+
+template int Randomizer::getRandomInt(int, int);
+template float Randomizer::getRandomReal(float, float);
+template std::string Randomizer::choose<std::string>(std::string* array, int n);
+template std::string* Randomizer::choose<std::string*>(std::vector<std::string*>& vector, int n);

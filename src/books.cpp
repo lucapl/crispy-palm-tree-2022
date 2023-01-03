@@ -8,23 +8,23 @@ static int* generateBooks(){
     return toReturn;
 }
 
-Books::scores = generateBooks();
+int* Books::scores = generateBooks();
 
-static int Books::getScore(int index){
+int Books::getScore(int index){
     return scores[index];
 }
 
-static void Books::modify(int id, int aScore){
+void Books::modify(int id, int aScore){
     scores[id] = aScore;
 }
 
-static void Books::clear(){
+void Books::clear(){
     delete scores;
 }
 
-static bool Books::compareByScore(int a, int b){	
+bool Books::compareByScore(int a, int b){	
 	return getScore(a) > getScore(b);
 }
-static bool Books::compareByID(int a, int b){
+bool Books::compareByID(int a, int b){
 	return a < b;
 }

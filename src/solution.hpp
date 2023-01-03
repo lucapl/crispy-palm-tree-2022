@@ -13,11 +13,14 @@ class Solution {
 		~Solution();
 		//std::string* toString();
 		int numberOfLibs();
+		int numberOfBooks();
 
 		void mutateLibs();
 		void mutateBooks();
 		Solution* crossWith(Solution*);
 		void setEvaluation(int);
 
-		void printSolution(int D, int B) //used only for printing the final solution into standard output
+		std::vector<int>* getLibs();
+
+		void printSolution(int D, int B); //used only for printing the final solution into standard output
 };

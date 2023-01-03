@@ -4,35 +4,40 @@
 Library::Library(int timeToScan,int maxScannedPerDay){
     time = timeToScan;
     maxScanned = maxScannedPerDay;
+    books = new std::vector<int>();
 }
 
 Library::~Library(){
     delete books;
 }
 
-Library::setT(int aTime){
+void Library::setT(int aTime){
     time = aTime;
 }
 
-Library::setM(int aMaxScanned){
+void Library::setM(int aMaxScanned){
     maxScanned = aMaxScanned;
 }
 
-Library::addBook(int id){
+void Library::addBook(int id){
     books->push_back(id);
 }
 
-Library::getN(){
+int Library::getN(){
     return books->size();
 }
-Library::getT(){
+int Library::getT(){
     return time;
 }
-Library::getM(){
+int Library::getM(){
     return maxScanned;
 }
 
 void Library::sortBooks(bool (*f)(int,int)){
     std::sort(books->begin(),books->end(),f);
+}
+
+int Library::getBookIDAt(int index) {
+    return books->at(index);
 }
 

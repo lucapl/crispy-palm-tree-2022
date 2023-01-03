@@ -6,10 +6,10 @@ class Books{
     public:
         //Books();
         //~Books();
-        int getScore(int index);
+        static int getScore(int index);
         static void clear();
-        modify(int id,int score);
+        static void modify(int id,int score);
 
-        compareByScore(int a, int b);
-        compareByID(int a, int b);
+        static bool compareByScore(int a, int b);
+        static bool compareByID(int a, int b);
 };

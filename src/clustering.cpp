@@ -1,5 +1,6 @@
 #include "libraries.hpp"
 #include "books.hpp"
+#include "clustering.hpp"
 
 float Clustering::distance(Library* A, Library* B)
 {           
@@ -10,8 +11,8 @@ float Clustering::distance(Library* A, Library* B)
 			int Bbook;
 			while(a<A->getN()&&b<B->getN())
 			{
-				Abook = A->books->get(a);
-				Bbook = B->books->get(b);
+				Abook = A->getBookIDAt(a);
+				Bbook = B->getBookIDAt(b);
 				if(Abook == Bbook)
 				{
 					++a;
@@ -28,8 +29,8 @@ float Clustering::distance(Library* A, Library* B)
 				}
 			}
 		//this is formula proposed by me:
-		float intersectionCardinality = SimmilarBooks;
-		float unionCardinality = A->getN() + B->getN() - SimmilarBooks;
+		float intersectionCardinality = (float)SimmilarBooks;
+		float unionCardinality = A->getN() + B->getN() - intersectionCardinality;
 		float simmilarity = intersectionCardinality/unionCardinality;
 		return 1.0 - simmilarity;
 		}
