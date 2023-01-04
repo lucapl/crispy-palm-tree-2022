@@ -20,7 +20,17 @@ class Solution {
 		Solution* crossWith(Solution*);
 		void setEvaluation(int);
 
+		void assignBookToLib(int bookId, int libId);
+		void addLibId(int libId);
+
 		std::vector<int>* getLibs();
+		int* getAssignedIds();
+		int getLibIdAssignedTo(int book);
+		int getEvaluation();
+		int getLibIdByIndex(int);
 
 		void printSolution(int D, int B); //used only for printing the final solution into standard output
+
+		Solution* copy();
+		bool equals(Solution*);
 };

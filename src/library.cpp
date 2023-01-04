@@ -33,11 +33,33 @@ int Library::getM(){
     return maxScanned;
 }
 
+std::vector<int>* Library::getBooks() {
+    return books;
+}
+
 void Library::sortBooks(bool (*f)(int,int)){
     std::sort(books->begin(),books->end(),f);
 }
 
 int Library::getBookIDAt(int index) {
     return books->at(index);
+}
+
+int* Library::getMaxNextBooks(bool* scanned) {
+    int n = 0;
+    int* bestBooks = new int[getM()];
+
+    for(int bookId : *getBooks()){
+        if (!scanned[bookId]) {
+            bestBooks[n] = bookId;
+            n++;
+        }
+
+        if (n >= getM()) {
+            break;
+        }
+    }
+
+    return bestBooks;
 }
 

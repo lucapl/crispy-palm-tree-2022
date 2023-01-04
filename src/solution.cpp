@@ -11,8 +11,48 @@ Solution::Solution(int aNOfBooks){
     evaluation = 0;
 }
 Solution::~Solution(){
-    delete assignedIds;
+    delete libraries;
+    delete[] assignedIds;
 }
+
+Solution* Solution::copy() {
+    Solution* newSol = new Solution(numberOfBooks());
+
+    std::vector<int>* libsCopy = newSol->getLibs();
+    std::copy(getLibs()->begin(), getLibs()->end(), back_inserter(*libsCopy));
+
+    int* copiedIds = newSol->getAssignedIds();
+    for (int i = 0; i < nOfBooks; i++) {
+        copiedIds[i] = getAssignedIds()[i];
+    }
+
+    return newSol;
+}
+
+bool Solution::equals(Solution* sol) {
+    if (sol == this) {
+        return true;
+    }
+    if (numberOfLibs() != sol->numberOfBooks() ||
+        !std::equal(getLibs()->begin(), getLibs()->end(), sol->getLibs()->begin())) {
+        return false;
+    }
+    for (int bookId = 0; bookId < numberOfBooks(); bookId++) {
+        if (getLibIdAssignedTo(bookId) != sol->getLibIdAssignedTo(bookId)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void Solution::assignBookToLib(int bookId, int libId) {
+    getAssignedIds()[bookId] = libId;
+}
+
+void Solution::addLibId(int libId) {
+    getLibs()->push_back(libId);
+}
+
 
 void Solution::setEvaluation(int eva){
     evaluation = eva;
@@ -23,6 +63,21 @@ int Solution::numberOfLibs(){
 }
 std::vector<int>* Solution::getLibs() {
     return libraries;
+}
+int Solution::getLibIdByIndex(int index) {
+    return getLibs()->at(index);
+}
+int Solution::getLibIdAssignedTo(int bookId) {
+    return getAssignedIds()[bookId];
+}
+int* Solution::getAssignedIds() {
+    return assignedIds;
+}
+int Solution::getEvaluation() {
+    return evaluation;
+}
+int Solution::numberOfBooks() {
+    return nOfBooks;
 }
 // params are D, B
 void Solution::printSolution(int nDays,int nBooks){ //used only for printing the final solution into standard output
@@ -37,18 +92,18 @@ void Solution::printSolution(int nDays,int nBooks){ //used only for printing the
         booksInLibs[libId].push_back(bookId);
     }
 
-    Books allBooks = Books();
+    //Books allBooks = Books();
 
     for(auto libId : *libraries){
         std::vector<int>* booksInLib = &booksInLibs[libId];
         std::cout << libId << booksInLib->size() << '\n'; // Y K
-        std::sort(booksInLib->begin(),booksInLib->end(),allBooks.compareByScore); //sort by score // this should be fine because the function is static
+        std::sort(booksInLib->begin(),booksInLib->end(), Books::compareByScore); //sort by score // this should be fine because the function is static
         for(auto bookId : *booksInLib){
             std::cout << bookId << ' '; // k_bookId
         }
         std::cout << '\n';
     }
-    delete booksInLibs;
+    delete[] booksInLibs;
 }
 
 void Solution::mutateLibs(){

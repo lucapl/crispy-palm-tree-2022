@@ -9,6 +9,7 @@ static Library** generateLibs(){
 }
 
 Library** Libraries::libs = generateLibs();
+float* Libraries::estimatedValues = new float[100000];
 
 Library* Libraries::getLibByID(int index){
     return libs[index];
@@ -28,4 +29,12 @@ void Libraries::clear(){
         delete libs[i];
     }
     delete libs;
+    delete[] estimatedValues;
+}
+
+int Libraries::getEstimatedValue(int libId) {
+    return estimatedValues[libId];
+}
+void Libraries::setEstimatedValue(int libId, float value) {
+    estimatedValues[libId] = value;
 }

@@ -1,8 +1,10 @@
 #include "randomizer.hpp"
+#include "solution.hpp"
 
 std::default_random_engine Randomizer::generator = std::default_random_engine();
 
-template<typename T,class Container>// for any container, which can be accessed through []
+template<typename T,class Container>
+// for any container, which can be accessed through []
 T Randomizer::choose(Container container, int n) {
     std::uniform_int_distribution<int> dist(0, n-1);
     return container[dist(generator)];
@@ -36,3 +38,5 @@ template int Randomizer::getRandomInt(int, int);
 template float Randomizer::getRandomReal(float, float);
 template std::string Randomizer::choose<std::string>(std::string* array, int n);
 template std::string* Randomizer::choose<std::string*>(std::vector<std::string*>& vector, int n);
+using Generation = std::vector<Solution*>;
+template Solution* Randomizer::choose<Solution*>(Generation&, int);

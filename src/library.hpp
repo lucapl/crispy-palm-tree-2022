@@ -18,8 +18,11 @@ class Library{
         int getM();
         void setM(int);
 
+        std::vector<int>* getBooks();
         void sortBooks(bool (*f)(int,int));
         int getBookIDAt(int index);
+
+        int* getMaxNextBooks(bool* scanned);
 
         void addBook(int);
 };
