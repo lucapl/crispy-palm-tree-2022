@@ -1,13 +1,18 @@
 #include "solution.hpp"
 #include "books.hpp"
+#include "libraries.hpp"
 #include "randomizer.hpp"
 #include <algorithm>
 #include <random>
 
 Solution::Solution(int aNOfBooks){
     nOfBooks = aNOfBooks;
+    booksAssigned = 0;
     libraries = new std::vector<int>();
     assignedIds = new int[nOfBooks];
+    for (int bookId = 0; bookId < nOfBooks;bookId++) {
+        assignedIds[bookId] = -1;
+    }
     evaluation = 0;
 }
 Solution::~Solution(){
@@ -59,12 +64,15 @@ void Solution::setEvaluation(int eva){
 }
 
 int Solution::numberOfLibs(){
-    return (int)libraries->size();
+    return (int)getLibs()->size();
 }
 std::vector<int>* Solution::getLibs() {
     return libraries;
 }
 int Solution::getLibIdByIndex(int index) {
+    if (numberOfLibs()-1 < index) {
+        return -1;
+    }
     return getLibs()->at(index);
 }
 int Solution::getLibIdAssignedTo(int bookId) {
@@ -85,7 +93,7 @@ void Solution::printSolution(int nDays,int nBooks){ //used only for printing the
     std::cout << A << '\n';
     std::vector<int>* booksInLibs = new std::vector<int>[A];
 
-    for(int bookId = 0; bookId < nBooks; bookId ++){
+    for(int bookId = 0; bookId < numberOfBooks(); bookId++) {
         int libId = assignedIds[bookId]; // Id of the assigned library to a book
 
         if (libId < 0){ continue; } // skip the iteration if Id not valid
@@ -96,7 +104,7 @@ void Solution::printSolution(int nDays,int nBooks){ //used only for printing the
 
     for(auto libId : *libraries){
         std::vector<int>* booksInLib = &booksInLibs[libId];
-        std::cout << libId << booksInLib->size() << '\n'; // Y K
+        std::cout << libId << ' ' << booksInLib->size() << '\n'; // Y K
         std::sort(booksInLib->begin(),booksInLib->end(), Books::compareByScore); //sort by score // this should be fine because the function is static
         for(auto bookId : *booksInLib){
             std::cout << bookId << ' '; // k_bookId
@@ -117,3 +125,75 @@ void Solution::mutateLibs(){
     libraries->at(i) = libraries->at(j);
     libraries->at(j) = temp;
 }
+
+void Solution::assignBooksInitially(int days,int bookCount) {
+    int dayLeftToScan = 0;
+    int libsScanned = -1;
+    int libIdScanned = 0;
+
+    //int theBook;
+    bool* scanned = new bool[bookCount];
+    for (int i = 0; i < bookCount; i++) {
+        scanned[i] = false;
+    }
+
+    for (int day = 0; day < days;day++) {
+        Library* scannedLib = Libraries::getLibByID(getLibIdByIndex(libIdScanned));
+        if (dayLeftToScan == 0) {
+            libsScanned++;
+            libIdScanned++;
+            if (scannedLib != NULL) {
+                dayLeftToScan = scannedLib->getT();
+            }
+        }
+
+        //scanning
+        for (int libId = 0; libId < libsScanned;libId++) {
+            Library* lib = Libraries::getLibByID(getLibIdByIndex(libId));
+            int* booksToScan = lib->getMaxNextBooks(scanned);
+            int i = 0;
+            while (i< lib->getM() && booksToScan[i] != -1) {
+                int bookId = booksToScan[i];
+                assignBookToLib(bookId,libId);
+                scanned[bookId] = true;
+                i++;
+            }
+            delete booksToScan;
+        }
+
+        dayLeftToScan--;
+    }
+} 
+
+using LibCombination = std::vector<int>;
+
+void Solution::constructGreedy(int days, int bookCount, int libCount) {
+    LibCombination libComb = LibCombination();
+    for (int libId = 0; libId < libCount; libId++) {
+        libComb.push_back(libId);
+    }
+    std::sort(libComb.begin(), libComb.end(), Libraries::compareByEstimatedValue);
+
+    //int libId = 0;
+    int countDays = days;
+    for (int libId: libComb) {
+        addLibId(libId);
+        countDays -= Libraries::getLibByID(libId)->getT();
+
+        if (countDays < 0) {
+            break;
+        }
+    }
+
+    //while (countDays > 0) {
+    //    //auto iter = 
+    //    //libId = *iter;
+    //    addLibId(libId);
+    //    countDays -= Libraries::getLibByID(libId)->getT();
+    //    libComb.erase(libId);
+    //    libId++;
+    //}
+
+    assignBooksInitially(days,bookCount);
+}
+

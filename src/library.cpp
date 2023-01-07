@@ -45,16 +45,18 @@ int Library::getBookIDAt(int index) {
     return books->at(index);
 }
 
-int* Library::getMaxNextBooks(bool* scanned) {
+int* Library::getMaxNextBooks(bool* scanned) { //function assumes that books are scanned by score
     int n = 0;
     int* bestBooks = new int[getM()];
+    for (int i = 0;i < getM();i++) {
+        bestBooks[i] = -1;
+    }
 
     for(int bookId : *getBooks()){
         if (!scanned[bookId]) {
             bestBooks[n] = bookId;
             n++;
         }
-
         if (n >= getM()) {
             break;
         }

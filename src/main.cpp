@@ -2,8 +2,11 @@
 #include<vector>
 #include<algorithm>
 //#include <bits/stdc++.h>
+#include <chrono>
 #include "books.hpp"
 #include "libraries.hpp"
+#include "solution.hpp"
+#include "geneticAlgorithm.hpp"
 using namespace std;
 
 bool compareByScore(int a, int b){	
@@ -48,6 +51,7 @@ void readLibs(Libraries* libs, FILE* instance, int nOfLibraries,int D) {
 }
 
 int main(int argc, char** argv){
+    auto start = std::chrono::high_resolution_clock::now();
 	
 	Books books = Books();
 	Libraries libs = Libraries();
@@ -56,7 +60,7 @@ int main(int argc, char** argv){
         std::cerr << "Too few arguments!\nCorrect command: ./$name$ [instance]\n";
         return 1;
     }
-    string inst = "C:\\Users\\£ukasz\\Desktop\\studia\\3rd semester\\CO\\project\\vs\\CO_project\\repo\\instances\\a_example.txt";
+    string inst = "C:\\Users\\£ukasz\\Desktop\\studia\\3rd semester\\CO\\project\\vs\\CO_project\\repo\\instances\\b_read_on.txt";
     FILE* instance = fopen(inst.c_str(), "r");
 
     if(!instance){
@@ -70,10 +74,20 @@ int main(int argc, char** argv){
     long long scoresSum = readBooks(&books,instance,nOfBooks);
     
     readLibs(&libs, instance, nOfLibraries,nOfDays);
+
+    Solution exampleSol = Solution(nOfBooks);
+    exampleSol.constructGreedy(nOfDays,nOfBooks,nOfLibraries);
+    //exampleSol.printSolution(nOfDays,nOfBooks);
+    GeneticAlgorithm alg = GeneticAlgorithm(nOfDays,nOfBooks);
+    std::cout << "Solution value percentage: " << (double)alg.evaluate(&exampleSol) / (double)scoresSum << '\n';
     
 	books.clear();
 	libs.clear();
     fclose(instance);
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+    std::cout << "Elapsed time: " << elapsed << " seconds" << std::endl;
     return 0;
 }
 

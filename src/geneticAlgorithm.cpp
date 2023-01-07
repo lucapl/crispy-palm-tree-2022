@@ -6,6 +6,13 @@
 
 using Generation = std::vector<Solution*>;
 
+GeneticAlgorithm::GeneticAlgorithm(int D, int B) {
+    this->D = D;
+    this->B = B;
+}
+
+GeneticAlgorithm::~GeneticAlgorithm() {}
+
 int GeneticAlgorithm::evaluate(Solution* sol){
     /*will be usefull for genetic algorithm (will add evaluation value for particular genotype).
 		the evaluation value should be the same as the final score, if this genotype will be choosen as a solution (if D and B are correct)*/
@@ -51,27 +58,30 @@ int GeneticAlgorithm::evaluate(Solution* sol){
     std::vector<int>** booksPerLib = getBooksToBeScanned(sol);
     int dayLeftToScan = 0;
     int libsScanned = -1;
-    int libScanned = 0;
+    int libIdScanned = 0;
     
     for (int day = 0; day < getD();day++) {
-        Library* scannedLib = Libraries::getLibByID(sol->getLibIdByIndex(libScanned));
-        if (dayLeftToScan <= 0 && scannedLib != NULL) {
-            dayLeftToScan = scannedLib->getT();
+        Library* scannedLib = Libraries::getLibByID(sol->getLibIdByIndex(libIdScanned));
+        if (dayLeftToScan == 0) {
             libsScanned++;
-            libScanned++;
+            libIdScanned++;
+            if (scannedLib != NULL) {
+                dayLeftToScan = scannedLib->getT();
+            }
         }
 
         //scanning
-        for (int libId = 0; libId < libsScanned;libId) {
+        for (int libId = 0; libId < libsScanned;libId++) {
             Library* lib = Libraries::getLibByID(sol->getLibIdByIndex(libId));
             int* booksToScan = lib->getMaxNextBooks(scanned);
             int i = 0;
-            while (booksToScan[i] != NULL) {
+            while (i < lib->getM() && booksToScan[i] != -1) {
                 int bookId = booksToScan[i];
                 finalScore += Books::getScore(bookId);
                 scanned[bookId] = true;
                 i++;
             }
+            delete booksToScan;
         }
 
         dayLeftToScan--;
@@ -86,7 +96,7 @@ int GeneticAlgorithm::evaluate(Solution* sol){
     //    }
     //}
 
-    
+    delete[] booksPerLib;
     delete[] scanned;
     return finalScore;
 }
@@ -176,6 +186,9 @@ std::vector<int>** GeneticAlgorithm::getBooksToBeScanned(Solution* sol) {
 
     for (int bookId = 0; bookId < sol->numberOfBooks();bookId++) {
         int libId = sol->getLibIdAssignedTo(bookId);
+        if (libId < 0) {
+            break;
+        }
         booksPerLib[libId]->push_back(bookId);
         //Library* lib = Libraries::getLibByID(libId);
     }

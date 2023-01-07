@@ -12,6 +12,9 @@ Library** Libraries::libs = generateLibs();
 float* Libraries::estimatedValues = new float[100000];
 
 Library* Libraries::getLibByID(int index){
+    if(index < 0){
+        return NULL;
+    }
     return libs[index];
 }
 
@@ -37,4 +40,8 @@ int Libraries::getEstimatedValue(int libId) {
 }
 void Libraries::setEstimatedValue(int libId, float value) {
     estimatedValues[libId] = value;
+}
+
+bool Libraries::compareByEstimatedValue(const int libId1,const int libId2) {
+    return getEstimatedValue(libId1) < getEstimatedValue(libId2);
 }

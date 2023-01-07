@@ -13,6 +13,9 @@ class GeneticAlgorithm {
 		int D;
 		int B;
 	public:
+		GeneticAlgorithm(int D, int B);
+		~GeneticAlgorithm();
+
 		int evaluate(Solution*);//simulate the registration, scanning and shipping
 		
 		Solution** cross(Solution*,Solution*);

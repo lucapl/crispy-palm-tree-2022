@@ -13,4 +13,5 @@ class Libraries{
         static int getEstimatedValue(int libId);
         static void setEstimatedValue(int libId,float value);
         static void clear();
+        static bool compareByEstimatedValue(const int libId1, const int libId2);
 };
