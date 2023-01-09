@@ -73,7 +73,7 @@ int GeneticAlgorithm::evaluate(Solution* sol){
         //scanning
         for (int libId = 0; libId < libsScanned;libId++) {
             Library* lib = Libraries::getLibByID(sol->getLibIdByIndex(libId));
-            int* booksToScan = lib->getMaxNextBooks(scanned);
+            int* booksToScan = lib->getMaxNextBooks(scanned,0);
             int i = 0;
             while (i < lib->getM() && booksToScan[i] != -1) {
                 int bookId = booksToScan[i];

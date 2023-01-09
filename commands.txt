@@ -1,0 +1,8 @@
+Oen CMD in this folder
+to compile:
+g++ -o project src\*.cpp
+to run:
+project.exe instances\a_example.txt
+
+
+

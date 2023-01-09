@@ -18,9 +18,10 @@ Library* Libraries::getLibByID(int index){
     return libs[index];
 }
 
-void Libraries::modifyLib(int id,int aTime, int aMaxScanned){
+void Libraries::modifyLib(int id,int aTime, int aMaxScanned, int NofBooks){
     libs[id]->setT(aTime);
     libs[id]->setM(aMaxScanned);
+    libs[id]->setNofBooks(NofBooks);
 }
 
 void Libraries::addBook(int libId,int bookId){

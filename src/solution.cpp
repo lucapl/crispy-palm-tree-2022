@@ -4,6 +4,7 @@
 #include "randomizer.hpp"
 #include <algorithm>
 #include <random>
+using namespace std;
 
 Solution::Solution(int aNOfBooks){
     nOfBooks = aNOfBooks;
@@ -137,6 +138,8 @@ void Solution::assignBooksInitially(int days,int bookCount) {
         scanned[i] = false;
     }
 
+	int FromWhichBookStartScanning[100000] = {0};
+	
     for (int day = 0; day < days;day++) {
         Library* scannedLib = Libraries::getLibByID(getLibIdByIndex(libIdScanned));
         if (dayLeftToScan == 0) {
@@ -146,14 +149,15 @@ void Solution::assignBooksInitially(int days,int bookCount) {
                 dayLeftToScan = scannedLib->getT();
             }
         }
-
+		
         //scanning
         for (int libId = 0; libId < libsScanned;libId++) {
             Library* lib = Libraries::getLibByID(getLibIdByIndex(libId));
-            int* booksToScan = lib->getMaxNextBooks(scanned);
+            int* booksToScan = lib->getMaxNextBooks(scanned,FromWhichBookStartScanning[libId]);
             int i = 0;
             while (i< lib->getM() && booksToScan[i] != -1) {
                 int bookId = booksToScan[i];
+                FromWhichBookStartScanning[libId]++;
                 assignBookToLib(bookId,libId);
                 scanned[bookId] = true;
                 i++;
@@ -167,13 +171,59 @@ void Solution::assignBooksInitially(int days,int bookCount) {
 
 using LibCombination = std::vector<int>;
 
+void Solution::constructGreedy(int days, int bookCount, int libCount, Libraries* libs) {
+	
+	bool InSolution[libCount] = {false};
+    LibCombination libComb = LibCombination();
+    int SolutionLength = 0;
+    int RemainingDays = days;
+    long long int loss = libs->loss;
+    
+    int BestLibraryID = 0;
+    long long int BestLibraryEvaluation;
+    long long int Evaluation;
+    int RegisterTime;
+    
+    Library* Current;
+    
+    while(RemainingDays!=0&&SolutionLength!=libCount)
+    {
+    	BestLibraryEvaluation = -10000000000000000;
+    	for(int ID = 0; ID<libCount; ID++)
+    	{
+    		if(InSolution[ID] == false)
+    		{
+    			Current = Libraries::getLibByID(ID);
+    			Evaluation = (RemainingDays - Current->getT())*Current->getAverageScore()*Current->getM() - loss*Current->getT();
+    			if(Evaluation>BestLibraryEvaluation)
+    			{
+    				RegisterTime = Current->getT();
+    				BestLibraryEvaluation = Evaluation;
+    				BestLibraryID = ID;
+				}
+			}
+		}
+		//cout<<"added "<<BestLibraryID<<" to solution"<<endl;
+		RemainingDays -= RegisterTime;
+		addLibId(BestLibraryID);
+		InSolution[BestLibraryID] = true;
+		SolutionLength++;
+	}
+}
+/*
 void Solution::constructGreedy(int days, int bookCount, int libCount) {
     LibCombination libComb = LibCombination();
     for (int libId = 0; libId < libCount; libId++) {
         libComb.push_back(libId);
     }
+    
+    
+    //std::cout<<"started sorting	... ";
     std::sort(libComb.begin(), libComb.end(), Libraries::compareByEstimatedValue);
-
+    //std::cout<<"ended sorting";
+    
+	//up to this moment it is ok
+	
     //int libId = 0;
     int countDays = days;
     for (int libId: libComb) {
@@ -193,7 +243,86 @@ void Solution::constructGreedy(int days, int bookCount, int libCount) {
     //    libComb.erase(libId);
     //    libId++;
     //}
-
+    
+	std::cout<<"started assigning books	... ";
     assignBooksInitially(days,bookCount);
+    std::cout<<"ended assigning books";
+}*/
+void Solution::evaluate(int D, int B) /*will be usefull for genetic algorithm (will add evaluation value for particular genotype).
+		the evaluation value should be the same as the final score, if this genotype will be choosen as a solution (if D and B are correct)*/
+		{
+			int LenGenotype = libraries->size();
+			int M, T, N,bookID, RemainingDaysForScanningInThisLiblary, bookIterator, RemainingBooksInLiblarary;
+			int finalScore = 0;
+			bool scanned[B] = { false };
+			
+			for(int i = 0; i<LenGenotype; ++i)
+			{
+				bookIterator = 0;
+				D -= Libraries::getLibByID(libraries->at(i))->getT();
+				RemainingDaysForScanningInThisLiblary = D;
+				RemainingBooksInLiblarary = Libraries::getLibByID(libraries->at(i))->getN();
+				while(RemainingDaysForScanningInThisLiblary>0&&RemainingBooksInLiblarary>0)
+				{
+					M = Libraries::getLibByID(libraries->at(i))->getM();
+					while(M>0&&RemainingBooksInLiblarary>0)
+					{
+						bookID = Libraries::getLibByID(libraries->at(i))->getBookIDAt(bookIterator);
+						if(scanned[bookID] == false)	//if first book which we take was not scanned
+						{
+							finalScore += Books::getScore(bookID);
+							scanned[bookID] = true;
+							M--;
+						}
+						RemainingBooksInLiblarary--;
+						bookIterator++;
+					}
+					RemainingDaysForScanningInThisLiblary--;
+				}
+			}
+		this->evaluationJerzy = finalScore;
+		}
+void Solution::print(int D, int B) /*will be usefull for genetic algorithm (will add evaluation value for particular genotype).
+		the evaluation value should be the same as the final score, if this genotype will be choosen as a solution (if D and B are correct)*/
+		{
+			int LenGenotype = libraries->size();
+			int M, T, N,bookID, RemainingDaysForScanningInThisLiblary, bookIterator, RemainingBooksInLiblarary;
+			vector<int>ScanningQueueOfTheLiblary;
+			bool scanned[B] = { false };
+			
+			for(int i = 0; i<LenGenotype; ++i)
+			{
+				bookIterator = 0;
+				D -= Libraries::getLibByID(libraries->at(i))->getT();
+				RemainingDaysForScanningInThisLiblary = D;
+				RemainingBooksInLiblarary = Libraries::getLibByID(libraries->at(i))->getN();
+				while(RemainingDaysForScanningInThisLiblary>0&&RemainingBooksInLiblarary>0)
+				{
+					M = Libraries::getLibByID(libraries->at(i))->getM();
+					while(M>0&&RemainingBooksInLiblarary>0)
+					{
+						bookID = Libraries::getLibByID(libraries->at(i))->getBookIDAt(bookIterator);
+						if(scanned[bookID] == false)	//if first book which we take was not scanned
+						{
+							ScanningQueueOfTheLiblary.push_back(bookID);
+							scanned[bookID] = true;
+							M--;
+						}
+						RemainingBooksInLiblarary--;
+						bookIterator++;
+					}
+					RemainingDaysForScanningInThisLiblary--;
+				}
+				cout<<endl<<libraries->at(i)<<" "<<ScanningQueueOfTheLiblary.size()<<endl;
+				for(int k = 0; k < ScanningQueueOfTheLiblary.size(); ++k)
+				{
+					cout<<ScanningQueueOfTheLiblary[k]<<" ";
+				}
+				ScanningQueueOfTheLiblary.clear();
+			}
+		}
+int Solution::getEvaluationJerzy()
+{
+	return evaluationJerzy;
 }
 

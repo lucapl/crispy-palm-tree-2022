@@ -1,0 +1,80 @@
+==========================================================
+Theoretical upper bound: 10000000
+averageMaxScanned 1
+averageSignupTime 11
+AverageScore of book in liblary 100
+loss 9090
+Solution value percentage: 0.58229
+Elapsed time: 0 seconds
+==========================================================
+Theoretical upper bound: 30076415
+averageMaxScanned 49511
+averageSignupTime 506
+AverageScore of book in liblary 300
+loss 2935435008
+Solution value percentage: 0.181782
+Elapsed time: 0 seconds
+==========================================================
+Theoretical upper bound: 5109000
+averageMaxScanned 1
+averageSignupTime 2
+AverageScore of book in liblary 65
+loss 975032
+Solution value percentage: 0.804326
+Elapsed time: 3 seconds
+==========================================================
+Theoretical upper bound: 12548648
+averageMaxScanned 1
+averageSignupTime 5
+AverageScore of book in liblary 125
+loss 5000
+Solution value percentage: 0.358764
+Elapsed time: 0 seconds
+==========================================================
+Theoretical upper bound: 40111142
+averageMaxScanned 7
+averageSignupTime 166
+AverageScore of book in liblary 401
+loss 11836
+Solution value percentage: 0.064994
+Elapsed time: 0 seconds
+==========================================================
+Theoretical upper bound: 10000000
+averageMaxScanned 1
+averageSignupTime 11
+AverageScore of book in liblary 100
+loss 9090
+Solution value percentage: 0.58229
+Elapsed time: 0 seconds
+==========================================================
+Theoretical upper bound: 30076415
+averageMaxScanned 49511
+averageSignupTime 506
+AverageScore of book in liblary 300
+loss 2935435008
+Solution value percentage: 0.181782
+Elapsed time: 0 seconds
+==========================================================
+Theoretical upper bound: 5109000
+averageMaxScanned 1
+averageSignupTime 2
+AverageScore of book in liblary 65
+loss 975032
+Solution value percentage: 0.804326
+Elapsed time: 3 seconds
+==========================================================
+Theoretical upper bound: 12548648
+averageMaxScanned 1
+averageSignupTime 5
+AverageScore of book in liblary 125
+loss 5000
+Solution value percentage: 0.358764
+Elapsed time: 0 seconds
+==========================================================
+Theoretical upper bound: 40111142
+averageMaxScanned 7
+averageSignupTime 166
+AverageScore of book in liblary 401
+loss 11836
+Solution value percentage: 0.064994
+Elapsed time: 0 seconds
