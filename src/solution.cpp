@@ -4,6 +4,7 @@
 #include "randomizer.hpp"
 #include <algorithm>
 #include <random>
+#include <limits>
 using namespace std;
 
 Solution::Solution(int aNOfBooks){
@@ -188,7 +189,7 @@ void Solution::constructGreedy(int days, int bookCount, int libCount, Libraries*
     
     while(RemainingDays!=0&&SolutionLength!=libCount)
     {
-    	BestLibraryEvaluation = -10000000000000000;
+    	BestLibraryEvaluation = -std::numeric_limits<long long int>::min();;
     	for(int ID = 0; ID<libCount; ID++)
     	{
     		if(InSolution[ID] == false)
@@ -313,10 +314,10 @@ void Solution::print(int D, int B) /*will be usefull for genetic algorithm (will
 					}
 					RemainingDaysForScanningInThisLiblary--;
 				}
-				cout<<endl<<libraries->at(i)<<" "<<ScanningQueueOfTheLiblary.size()<<endl;
+				cout<<endl<<libraries->at(i)<<' '<<ScanningQueueOfTheLiblary.size()<<endl;
 				for(int k = 0; k < ScanningQueueOfTheLiblary.size(); ++k)
 				{
-					cout<<ScanningQueueOfTheLiblary[k]<<" ";
+					cout<<ScanningQueueOfTheLiblary[k]<<' ';
 				}
 				ScanningQueueOfTheLiblary.clear();
 			}
