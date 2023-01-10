@@ -9,5 +9,5 @@ To compile and run program on windows with particullar instance, open cmd in thi
 To compile on linux run cmake and then make in the main folder
 
 ## Running the program and redirecting pipes
-The program reads from std::cin so the instance can be given on linux as such: _**'cat {instance}.txt | ./co_proj'**_
+The program reads from std::cin so the instance can be given on linux as such: _**'cat {instance}.txt | ./co_proj'**___
 on windows it would be: _**'type {instance}.txt | .\project.exe'**_
