@@ -3,6 +3,7 @@
 class Books{
     private:
         static int* scores;
+        static float averageScore;
     public:
         //Books();
         //~Books();
@@ -12,4 +13,7 @@ class Books{
 
         static bool compareByScore(int a, int b);
         static bool compareByID(int a, int b);
+        
+        static void setAverageScore(float score);
+        static float getAverageScore();
 };

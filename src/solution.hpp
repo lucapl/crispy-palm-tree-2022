@@ -1,5 +1,6 @@
 #pragma once
 #include "library.hpp"
+#include "libraries.hpp"
 #include <vector>
 
 class Solution {
@@ -8,7 +9,8 @@ class Solution {
 		int* assignedIds; //array index = book id -> array value = library id
 		int nOfBooks;
 		int booksAssigned;
-		int evaluation; // value of a solution
+		int evaluation; // value of a solution by Lukasz
+		int evaluationJerzy; //value of a solution by Jerzy
 	public:
 		Solution(int);
 		~Solution();
@@ -24,7 +26,7 @@ class Solution {
 		void assignBookToLib(int bookId, int libId);
 		void addLibId(int libId);
 		void assignBooksInitially(int days,int bookCount);
-		void constructGreedy(int D,int B,int L);
+		void constructGreedy(int D,int B,int L, Libraries* libs);
 
 		std::vector<int>* getLibs();
 		int* getAssignedIds();
@@ -36,4 +38,8 @@ class Solution {
 
 		Solution* copy();
 		bool equals(Solution*);
+		
+		void evaluate(int D, int B);
+		void print(int D, int B);
+		int getEvaluationJerzy();
 };

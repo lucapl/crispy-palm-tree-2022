@@ -8,7 +8,11 @@ class Library{
         std::vector<int>* books; // vector of book ids, size of N
         int time; // T
         int maxScanned; // M
+        int NofBooks; // number of books in a liblary
+        int averageScore; //average score of book
     public:
+    	int ScoresSum;
+    	
         Library(int T, int M);
         ~Library();
         //void scan(){}
@@ -22,9 +26,14 @@ class Library{
         void sortBooks(bool (*f)(int,int));
         int getBookIDAt(int index);
 
-        int* getMaxNextBooks(bool* scanned);
+        int* getMaxNextBooks(bool* scanned, int from);
 
         void addBook(int);
+        
+        void setAverageScore(int score);
+        int getAverageScore();
+        void setNofBooks(int n);
+        int getNofBooks();
 };
 
 #endif

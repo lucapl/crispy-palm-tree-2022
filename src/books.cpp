@@ -8,7 +8,15 @@ static int* generateBooks(){
     return toReturn;
 }
 
+static float generateAverageScore()
+{
+	float toReturn = 0;
+	return toReturn;
+}
+
 int* Books::scores = generateBooks();
+
+float Books::averageScore = generateAverageScore();
 
 int Books::getScore(int index){
     return scores[index];
@@ -27,4 +35,10 @@ bool Books::compareByScore(int a, int b){
 }
 bool Books::compareByID(int a, int b){
 	return a < b;
+}
+void Books::setAverageScore(float score){
+	averageScore = score;
+}
+float Books::getAverageScore(){
+	return averageScore;
 }
