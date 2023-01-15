@@ -27,11 +27,13 @@ class GeneticAlgorithm {
 
 		void initializePopulation(Solution* sol, int copies);
 		void initializePopulation(Solution* sol);
+		void randomPopulation(int copies);
+		void randomPopulation();
 
 		int evaluate(Solution*);//simulate the registration, scanning and shipping
 		
-		void crossover(Solution*,Solution*,Population*);
-		Solution* mutate(Solution*);
+		void crossover(int,int,Population*);
+		void mutate(int,Population*);
 
 		Population* newGeneration();
 		Population* select(Sampler* sampler,Population* pop);

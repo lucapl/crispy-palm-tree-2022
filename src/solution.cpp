@@ -5,8 +5,10 @@
 #include <algorithm>
 #include <random>
 #include <limits>
+#include <cmath>
 using namespace std;
 using LibCombination = std::vector<int>;
+using LibSet = std::set<int>;
 
 Solution::Solution(int aNOfBooks){
     nOfBooks = aNOfBooks;
@@ -15,9 +17,9 @@ Solution::Solution(int aNOfBooks){
     //for (int bookId = 0; bookId < nOfBooks;bookId++) {
     //    assignedIds[bookId] = -1;
     //}
-    libsToConsider = new LibCombination();
+    libsToConsider = new LibSet();
     for (int libId = 0; libId < Libraries::getL(); libId++) {
-        libsToConsider->push_back(libId);
+        libsToConsider->insert(libId);
     }
     evaluation = -1;
 }
@@ -54,15 +56,15 @@ bool Solution::equals(Solution* sol) {
     if (sol == this) {
         return true;
     }
-    if (getNumberOfLibs() != sol->getNumberOfBooks() ||
+    if (getNumberOfLibs() != sol->getNumberOfLibs() ||
         !std::equal(getLibs()->begin(), getLibs()->end(), sol->getLibs()->begin())) {
         return false;
     }
-    for (int bookId = 0; bookId < getNumberOfBooks(); bookId++) {
-        if (getLibIdAssignedTo(bookId) != sol->getLibIdAssignedTo(bookId)) {
-            return false;
-        }
-    }
+    //for (int bookId = 0; bookId < getNumberOfBooks(); bookId++) {
+    //    if (getLibIdAssignedTo(bookId) != sol->getLibIdAssignedTo(bookId)) {
+    //        return false;
+    //    }
+    //}
     return true;
 }
 
@@ -73,16 +75,21 @@ void Solution::assignBookToLib(int bookId, int libId) {
 void removeFromVector(std::vector<int>* v,int i) {
     v->erase(std::remove(v->begin(), v->end(), i), v->end());
 }
+void removeFromSet(std::set<int>* s, int i) {
+    //s->erase(std::find(s->begin(),s->end(),i));
+    s->erase(i);
+}
 
 void Solution::addLibId(int libId) {
-    removeFromVector(libsToConsider, libId);
+    //removeFromVector(libsToConsider, libId);
+    removeFromSet(libsToConsider,libId);
     getLibs()->push_back(libId);
     int T = Libraries::getLibByID(libId)->getT();
     timeToRegister += T;
 }
 void Solution::removeLIbId(int libId) {
     removeFromVector(getLibs(), libId);
-    libsToConsider->push_back(libId);
+    libsToConsider->insert(libId);
     int T = Libraries::getLibByID(libId)->getT();
     timeToRegister -= T;
 }
@@ -142,21 +149,32 @@ void Solution::printSolution(int nDays,int nBooks){ //used only for printing the
     }
     delete[] booksInLibs;
 }
+void vectorSwap(LibCombination* comb1, LibCombination* comb2, int lib1, int lib2) {
+    auto i = std::find(comb1->begin(), comb1->end(), lib1);
+    auto j = std::find(comb2->begin(), comb2->end(), lib2);
+    std::swap(i, j);
+}
 
 void Solution::mutateLibs(int D){
     Randomizer randomizer = Randomizer();
     setEvaluation(-1);
 
     if (timeToRegister < D) {
-        addLibId(randomizer.choose<int, LibCombination&>(*libsToConsider, libsToConsider->size()));
+        addLibId(*randomizer.randomFromSet(libsToConsider));
     }
     
-    // add libraries
-    if (randomizer.roll(0.5)) {
-        int considerLib = randomizer.choose<int, LibCombination&>(*libsToConsider, libsToConsider->size());
+    double prob = 1-(double)getNumberOfLibs()/Libraries::getL();
+    if (randomizer.roll(0.2*prob)) {
+        /*int considerLib = randomizer.choose<int, LibCombination&>(*libsToConsider, libsToConsider->size());
         int inSolLib = randomizer.choose<int, LibCombination&>(*getLibs(), getLibs()->size());
-        addLibId(considerLib);
-        removeLIbId(inSolLib);
+        vectorSwap*/
+        auto vectorIter = getLibs()->begin()+randomizer.getRandomInt<>(0, (int)getLibs()->size()-1);
+        int libInside = *vectorIter;
+        int libOutside = *randomizer.randomFromSet(libsToConsider);
+        removeFromSet(libsToConsider, libOutside);
+        std::swap(*vectorIter, libOutside);
+        libsToConsider->insert(libInside);
+
     }
     else {
         int n = getNumberOfLibs() - 1;
@@ -218,7 +236,7 @@ int pickBestByEval(int remainingDays,unsigned int L, bool* inSolution) {
             continue;
         }
         Library* current = Libraries::getLibByID(libId);
-        double evaluation = (remainingDays - current->getT()) * current->getAverageScore() * current->getM() - loss * current->getT();
+        double evaluation = ((remainingDays - current->getT()) * current->getAverageScore() * current->getM()) - (loss * current->getT());
         //double evaluation2 = (remainingDays - current->getT()) * current->getAverageScore() * current->getM() - loss * current->getT();
         //std::cout << (int)current->getAverageScore() << ' ' << current->getAverageScore() << endl;
         if (evaluation <= bestLibraryEvaluation) {
@@ -238,10 +256,6 @@ void Solution::constructGreedy(int days, int bookCount, int libCount) {
     while(remainingDays > 0 && SolutionLength < libCount){	
         int bestLib = pickBestByEval(remainingDays, libCount, inSolution);
         Library* current = Libraries::getLibByID(bestLib);
-
-        if (current == NULL) {
-            break;
-        }
 
 		remainingDays -= current->getT();
 		addLibId(bestLib);
@@ -365,4 +379,12 @@ void Solution::print(int D, int B){
 
 int Solution::getTimeToRegister() {
     return timeToRegister;
+}
+
+bool Solution::isInNew() {
+    return inNew;
+}
+
+void Solution::setInNew(bool b) {
+    inNew = b;
 }

@@ -7,11 +7,12 @@
 class Solution {
 	private:
 		std::vector<int>* libraries; //combination of libraries IDs
-		std::vector<int>* libsToConsider;
+		std::set<int>* libsToConsider;
 		int* assignedIds; //array index = book id -> array value = library id
 		int nOfBooks;
 		int timeToRegister;
 		int evaluation; // value of a solution
+		bool inNew; // if it is new generation
 	public:
 		Solution(int);
 		~Solution();
@@ -30,6 +31,7 @@ class Solution {
 		// setters
 
 		void setEvaluation(int);
+		void setInNew(bool);
 
 		// getters
 
@@ -41,6 +43,7 @@ class Solution {
 		int getNumberOfLibs();
 		int getNumberOfBooks();
 		int getTimeToRegister();
+		bool isInNew();
 
 		//used only for printing the final solution into standard output
 		void printSolution(int D, int B );

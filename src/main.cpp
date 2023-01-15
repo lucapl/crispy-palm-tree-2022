@@ -97,7 +97,7 @@ void probabilityEstimate(int B,int D,int L) {
 
         //Libraries::setEstimatedValue(libId, estimatedValue);
         //lib->setAverageScore(estimatedValue<probabilityScoreSum?estimatedValue:probabilityScoreSum);
-        lib->setAverageScore(estimatedValue);
+        lib->setAverageScore(probabilityScoreSum);
     }
 }
 
@@ -128,13 +128,13 @@ int main(int argc, char** argv){
     
     readLibs(&libs, *input, nOfLibraries,nOfDays);
  
-    probabilityEstimate(nOfBooks,nOfDays,nOfLibraries);
+    //probabilityEstimate(nOfBooks,nOfDays,nOfLibraries);
 
     Solution exampleSol = Solution(nOfBooks);
     exampleSol.constructGreedy(nOfDays,nOfBooks,nOfLibraries);
     exampleSol.evaluate(nOfDays, nOfBooks);
     long long int initialEval = exampleSol.getEvaluation();
-    GeneticAlgorithm alg = GeneticAlgorithm(100,nOfDays, nOfBooks,nOfLibraries,0.05,0.6);
+    GeneticAlgorithm alg = GeneticAlgorithm(200,nOfDays, nOfBooks,nOfLibraries,0.05,0.6);
     //Solution allSol = Solution(0);
     //for (int libId = 0; libId < nOfLibraries; libId++) {
     //    allSol.addLibId(libId);
@@ -142,8 +142,10 @@ int main(int argc, char** argv){
     //alg.initializePopulation(&allSol);
     //Solution emptySol = Solution(nOfBooks);
     //alg.initializePopulation(&emptySol,95);
-    alg.initializePopulation(&exampleSol);
-    alg.evolve(10000, 100);
+    //alg.initializePopulation(exampleSol.copy());
+    alg.add(exampleSol.copy());
+    alg.randomPopulation();
+    alg.evolve(10000, 1000);
     Solution* bestSol = alg.getBestSolution();
     long long int bestVal = bestSol->getEvaluation();
     cout<< "solution eval: "<< bestSol->getEvaluation()<<endl;

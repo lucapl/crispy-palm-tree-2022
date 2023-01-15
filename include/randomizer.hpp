@@ -1,5 +1,6 @@
 #pragma once
 #include <random>
+#include <set>
 
 class Randomizer{
 	private:
@@ -22,4 +23,6 @@ class Randomizer{
 
 		template<typename Container>
 		void shuffle(Container cont,int size);
+
+		std::set<int>::iterator randomFromSet(std::set<int>* set);
 };

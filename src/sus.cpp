@@ -41,7 +41,7 @@ Population* SUSampling::rouletteWheelSelection(Population* pop,int size, double*
 			for (Solution* sol:*pop) {
 				fitnessSumToI += sol->getEvaluation();
 			}
-			keep->push_back(pop->at(I)->copy());
+			keep->push_back(pop->at(I));
 		} while (fitnessSumToI < point);
 	}
 
