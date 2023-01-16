@@ -259,6 +259,7 @@ void GeneticAlgorithm::evolutionStep() {
 }
 
 void GeneticAlgorithm::evolve(unsigned int maxIters, unsigned int maxNoImprovIters) {
+	Timer* timer = Timer::getInstance();
     unsigned int noImprovIters = 0;
     for (int iter = 0; iter < maxIters && noImprovIters < maxNoImprovIters; iter++, noImprovIters++) {
         evolutionStep();
@@ -267,7 +268,7 @@ void GeneticAlgorithm::evolve(unsigned int maxIters, unsigned int maxNoImprovIte
             noImprovIters = 0;
             setSolutionChange(false);
         }
-        if (Timer::shouldEnd()) {
+        if (timer->shouldEnd()) {
             break;
         }
     }

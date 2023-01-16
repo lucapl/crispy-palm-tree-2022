@@ -98,8 +98,8 @@ void probabilityEstimate(int B,int D,int L) {
 }
 
 int main(int argc, char** argv){
-    Timer timer = Timer();
-    timer.setMaxTime(240);//4 mins
+    Timer* timer = Timer::getInstance();
+    timer->setMaxTime(240);//4 mins
 	
 	Books books = Books();
 	Libraries libs = Libraries();

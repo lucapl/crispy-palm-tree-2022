@@ -1,5 +1,6 @@
 #include "randomizer.hpp"
 #include "sus.hpp"
+#include <algorithm>
 
 Population* SUSampling::sample(Population* pop, int size) {
 	return sus(pop,size);
