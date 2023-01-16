@@ -5,12 +5,15 @@
 #include "randomizer.hpp"
 #include "timer.hpp"
 #include <algorithm>
+#include "solutionPool.hpp"
 
 GeneticAlgorithm::GeneticAlgorithm(unsigned int popsize,unsigned int D, unsigned int B, unsigned int L,float pCrossover,float pMutation) : popsize(popsize), D(D), B(B),L(L) {
-    this->bestSolution = new Solution(1);
+    this->solutionPool = SolutionPool::getInstance();
+    this->bestSolution = solutionPool->getSolution();
     this->population = new Population();
     this->pMutateLibs = pMutation;
     this->pCrossover = pCrossover;
+    
 
     bestValues = new std::vector<int>();
 }
@@ -18,9 +21,10 @@ GeneticAlgorithm::GeneticAlgorithm(unsigned int popsize,unsigned int D, unsigned
 void cleanOld(Population& pop) {
     //std::sort(pop.begin(), pop.end());
     //pop.erase(std::unique(pop.begin(), pop.end()), pop.end());
+    SolutionPool* sp = SolutionPool::getInstance();
     for (Solution* sol : pop) {
-        if (sol != NULL && !sol->isInNew()) {
-            delete sol;
+        if (sol != NULL && !sol->isInNew() && !sol->returned) {
+            sp->returnSolution(sol);
         }
     }
 }
@@ -31,8 +35,11 @@ void cleanPop(Population& pop) {
         pop.end());
     std::sort(pop.begin(), pop.end());
     pop.erase(std::unique(pop.begin(), pop.end()), pop.end());
+    SolutionPool* sp = SolutionPool::getInstance();
     for (Solution* sol : pop) {
-        delete sol;
+        if (!sol->returned) {
+            sp->returnSolution(sol);
+        }
     }
     pop.clear();
     delete& pop;
@@ -40,123 +47,17 @@ void cleanPop(Population& pop) {
 
 
 GeneticAlgorithm::~GeneticAlgorithm() {
-    cleanPop(*getPopulation());
+    //cleanPop(*getPopulation());
     for (Solution* sol : *getPopulation()) {
-        delete sol;
+        if (!sol->returned) {
+            solutionPool->returnSolution(sol);
+        }
     }
     getPopulation()->clear();
     delete getPopulation();
-    delete getBestSolution();
+    solutionPool->returnSolution(getBestSolution());
 }
 
-//
-//int GeneticAlgorithm::evaluate(Solution* sol){
-//    /*will be usefull for genetic algorithm (will add evaluation value for particular genotype).
-//		the evaluation value should be the same as the final score, if this genotype will be choosen as a solution (if D and B are correct)*/
-//    //int M, T, N, remainingDaysForScanningInThisLibrary, bookIterator, remainingBooksInLiblary;
-//    int finalScore = 0;
-//    //int theBook;
-//    bool* scanned = new bool[getB()];
-//    for (int i = 0; i < getB(); i++) {
-//        scanned[i] = false;
-//    }
-//    
-//    //Libraries* libs = new Libraries();
-//    //Books* books = new Books();
-//
-//    //int LenGenotype = sol->numberOfLibs();
-//    //for(int libID : *sol->getLibs()){
-//    //    bookIterator = 0;
-//    //    Library* lib = Libraries::getLibByID(libID);
-//    //    D -= lib->getT();
-//    //    remainingDaysForScanningInThisLibrary = D;
-//    //    remainingBooksInLiblary = lib->getN();
-//    //    M = 0;
-//    //    while(remainingDaysForScanningInThisLibrary>0&&remainingBooksInLiblary>0){
-//    //        for(int j = M;M>=0;--j)
-//    //        {
-//    //            theBook = lib->getBookIDAt(bookIterator);
-//    //            if(scanned[theBook] == false)
-//    //            {
-//    //                finalScore += Books::getScore(theBook);
-//    //                scanned[theBook] = true;
-//    //            }
-//    //            remainingBooksInLiblary--;
-//    //            bookIterator++;
-//    //            if(remainingBooksInLiblary == 0)
-//    //            {
-//    //                break;
-//    //            }
-//    //        }
-//    //        remainingDaysForScanningInThisLibrary--;
-//    //    }
-//    //}
-//
-//    std::vector<int>** booksPerLib = getBooksToBeScanned(sol);
-//    int dayLeftToScan = 0;
-//    int libsScanned = -1;
-//    int libIdScanned = 0;
-//
-//    unsigned int l = sol->getNumberOfLibs();
-//    unsigned int* lastScannedBookId = new unsigned int[l];
-//    //unsigned int* Ms = new unsigned int[l];
-//    for (int solLibId = 0; solLibId < l; solLibId++) {
-//        lastScannedBookId[solLibId] = -1;
-//        //int m = Libraries::getLibByID(sol->getLibIdByIndex(solLibId))->getM();
-//        //Ms[solLibId] = m;
-//    }
-//    
-//    for (int day = 0; day < getD();day++) {
-//        Library* scannedLib = Libraries::getLibByID(sol->getLibIdByIndex(libIdScanned));
-//        if (dayLeftToScan == 0) {
-//            libsScanned++;
-//            libIdScanned++;
-//            if (scannedLib != NULL) {
-//                dayLeftToScan = scannedLib->getT();
-//            }
-//        }
-//
-//        //scanning
-//        for (int solLibId = 0; solLibId < libsScanned;solLibId++) {
-//            Library* lib = Libraries::getLibByID(sol->getLibIdByIndex(solLibId));
-//            unsigned int zero = 0;
-//            //int* booksToScan = lib->getMaxNextBooks(scanned, zero);
-//            int m = lib->getM();
-//            for (int i = 0; i < m; i++) {
-//                if (lastScannedBookId[solLibId] >= 0) {
-//                    break;
-//                }
-//                int bookId = booksPerLib[solLibId]->at(lastScannedBookId[solLibId]++);
-//                finalScore += Books::getScore(bookId);
-//            }
-//            /*while (i < m && booksToScan[i] != -1) {
-//                int bookId = booksToScan[i];
-//                finalScore += Books::getScore(bookId);
-//                scanned[bookId] = true;
-//                i++;
-//            }*/
-//            //delete[] booksToScan;
-//        }
-//
-//        dayLeftToScan--;
-//    }
-//    //for (int libId : *sol->getLibs()) {
-//    //    Library* lib = Libraries::getLibByID(libId);
-//    //    int daysOfScanning = lib->getT();
-//    //    for (int otherLibId = 0; otherLibId < libId; otherLibId++) {
-//    //        Library* otherLib = Libraries::getLibByID(otherLibId);
-//    //        
-//
-//    //    }
-//    //}
-//    for (int i = 0; i < getL(); i++) {
-//        booksPerLib[i]->clear();
-//        delete booksPerLib[i];
-//    }
-//    delete[] booksPerLib;
-//    delete[] scanned;
-//    return finalScore;
-//}
 
 int GeneticAlgorithm::evaluate(Solution* sol) {
     sol->evaluate(getD(), getB());
@@ -169,16 +70,16 @@ Solution* GeneticAlgorithm::getBestSolution() {
 
 void GeneticAlgorithm::setBestSolution(Solution* contender) {
     if (getBestSolution() == NULL || contender->getEvaluation() > getBestSolution()->getEvaluation()) {
-        delete bestSolution;
-        bestSolution = contender->copy(); // to ensure it wont get deleted
+        solutionPool->returnSolution(getBestSolution());
+        bestSolution = solutionPool->getSolution();// to ensure it wont get deleted
         setSolutionChange(true);
-        bestValues->push_back(bestSolution->getEvaluation());
+        //bestValues->push_back(bestSolution->getEvaluation());
+        contender->assignTo(bestSolution);
     }
 }
 
-// function copies the solution under pointer
 void GeneticAlgorithm::add(Solution* sol) {
-    getPopulation()->push_back(sol);//copying to be optimized
+    getPopulation()->push_back(sol);
 }
 
 Solution* GeneticAlgorithm::selectBetter(Solution* sol1, Solution* sol2) {
@@ -223,7 +124,8 @@ void removeOneOccurence(Population* pop, Solution* sol) {
 // swap mutation
 void GeneticAlgorithm::mutate(int i, Population* pop) {
     Solution* sol = pop->at(i);
-    Solution* newSol = sol->copy();
+    Solution* newSol = solutionPool->getSolution();
+    sol->assignTo(newSol);
     newSol->mutateLibs(getD());
     //std::swap((*pop)[i], newSol);
     pop->push_back(newSol);
@@ -234,8 +136,8 @@ void GeneticAlgorithm::mutate(int i, Population* pop) {
 void GeneticAlgorithm::crossover(int parent1i,int parent2i, Population* pop) {
     Solution* parent1 = pop->at(parent1i);
     Solution* parent2 = pop->at(parent2i);
-    Solution* child1 = new Solution(getB());
-    Solution* child2 = new Solution(getB());
+    Solution* child1 = solutionPool->getSolution();
+    Solution* child2 = solutionPool->getSolution();
     bool* child1Libs = new bool[getL()]();
     bool* child2Libs = new bool[getL()]();
 
@@ -280,7 +182,6 @@ void GeneticAlgorithm::crossover(int parent1i,int parent2i, Population* pop) {
 // returns a new Population* that needs to be deleted later
 Population* GeneticAlgorithm::newGeneration() {
     Randomizer random = Randomizer();
-    Population* crossedOverPop = new Population();
 
     //uses SUS algorithm 
     Population* newGeneration = select(getPopulation());
@@ -347,29 +248,6 @@ void GeneticAlgorithm::evaluatePopulation() {
     evaluatePopulation(getPopulation());
 }
 
-std::vector<int>** GeneticAlgorithm::getBooksToBeScanned(Solution* sol) {
-    std::vector<int>** booksPerLib = new std::vector<int>*[sol->getNumberOfLibs()];
-    for (int libId = 0; libId < sol->getNumberOfLibs();libId++) {
-        booksPerLib[libId] = new std::vector<int>();
-    }
-
-    for (int bookId = 0; bookId < sol->getNumberOfBooks();bookId++) {
-        int libId = sol->getLibIdAssignedTo(bookId);
-        if (libId < 0) {
-            break;
-        }
-        booksPerLib[libId]->push_back(bookId);
-        //Library* lib = Libraries::getLibByID(libId);
-    }
-
-    for (int libId = 0; libId < sol->getNumberOfLibs();libId++) {
-        std::vector<int>* booksAtLib = booksPerLib[libId];
-        std::sort(booksAtLib->begin(),booksAtLib->end(),Books::compareByScore);
-    }
-
-    return booksPerLib;
-}
-
 void GeneticAlgorithm::evolutionStep() {
     evaluatePopulation();
     Population* newPop = newGeneration();
@@ -413,7 +291,7 @@ void GeneticAlgorithm::randomPopulation(int copies) {
     Randomizer rand = Randomizer();
     for (int i = 0;i < copies;i++) {
         rand.shuffle<int*>(libs, (int)getL());
-        Solution* newSol = new Solution(getB());
+        Solution* newSol = solutionPool->getSolution();
         for(int libId = 0;libId < getL() && newSol->getTimeToRegister() < getD();libId++) {
             newSol->addLibId(libs[libId]);
         }

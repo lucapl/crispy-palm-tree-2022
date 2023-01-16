@@ -1,6 +1,7 @@
 #pragma once
 #include "sus.hpp"
 #include "solution.hpp"
+#include "solutionPool.hpp"
 #include "library.hpp"
 #include <vector>
 
@@ -19,7 +20,10 @@ class GeneticAlgorithm {
 		const unsigned int D;
 		const unsigned int B;
 		const unsigned int L;
+
+		
 	public:
+		SolutionPool* solutionPool;
 		GeneticAlgorithm(unsigned int popsize, unsigned int D, unsigned int B,unsigned int L, float pCrossover,float pMutation);
 		~GeneticAlgorithm();
 

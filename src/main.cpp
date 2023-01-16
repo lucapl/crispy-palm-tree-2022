@@ -7,6 +7,7 @@
 #include "libraries.hpp"
 #include "solution.hpp"
 #include "geneticAlgorithm.hpp"
+#include "solutionPool.hpp"
 #include "timer.hpp"
 using namespace std;
 
@@ -27,7 +28,7 @@ long long readBooks(Books* books,istream& input,int nOfBooks){
 		books->modify(bookId,score);
         scoresSum += score;
     }
-	std::cout << "Upper bound: " << scoresSum << '\n';//to be deleted
+	//std::cout << "Upper bound: " << scoresSum << '\n';//to be deleted
     return scoresSum;
 }
 
@@ -62,20 +63,17 @@ void readLibs(Libraries* libs, istream& input, int nOfLibraries,int D) {
         }
         libs->getLibByID(libId)->ScoresSum = scoreSum;
         libs->getLibByID(libId)->setAverageScore((double)scoreSum/nOfBooksInLib);
-        //float estimatedValue = ((float)scoreSum / nOfBooksInLib) * maxScanned * (D - timeToRegister);
-        //libs->setEstimatedValue(libId,estimatedValue<scoreSum?estimatedValue:scoreSum);
-
         libs->getLibByID(libId)->sortBooks(compareByScore);
     }
     libs->setAverageM((double)SumOfMaxScanned/nOfLibraries);
-    cout<<"averageMaxScanned "<<libs->getAverageM()<<endl; //print to be deleted
+    //cout<<"averageMaxScanned "<<libs->getAverageM()<<endl; //print to be deleted
     libs->setAverageT((double)SumOfSingupTimes/nOfLibraries); 
-    cout<<"averageSignupTime "<<libs->getAverageT()<<endl; //print to be deleted
+    //cout<<"averageSignupTime "<<libs->getAverageT()<<endl; //print to be deleted
     Books::setAverageScore((double)SumOfScoresOfAllBooksInLibs/NoOfAllBooks);
-    cout<<"AverageScore of book in liblary "<<Books::getAverageScore()<<endl; //print to be deleted
+    //cout<<"AverageScore of book in liblary "<<Books::getAverageScore()<<endl; //print to be deleted
     
     libs->setLoss(libs->getAverageM()*Books::getAverageScore() / libs->getAverageT());
-    cout<<"Loss/day "<<libs->getLoss()<<endl; // print to be deleted
+    //cout<<"Loss/day "<<libs->getLoss()<<endl; // print to be deleted
 }
 
 void probabilityEstimate(int B,int D,int L) {
@@ -95,80 +93,55 @@ void probabilityEstimate(int B,int D,int L) {
         }
         double estimatedValue = ((double)probabilityScoreSum / lib->getN());
 
-        //Libraries::setEstimatedValue(libId, estimatedValue);
-        //lib->setAverageScore(estimatedValue<probabilityScoreSum?estimatedValue:probabilityScoreSum);
-        lib->setAverageScore(probabilityScoreSum);
+        lib->setAverageScore(estimatedValue);
     }
 }
 
 int main(int argc, char** argv){
     Timer timer = Timer();
-    timer.setMaxTime(240);
-	cout<<"=========================================================="<<endl;//print to be deleted before sending the project
+    timer.setMaxTime(240);//4 mins
 	
 	Books books = Books();
 	Libraries libs = Libraries();
+    SolutionPool* sp = SolutionPool::getInstance();
 
-	//ifstream file("C:\\Users\\£ukasz\\Desktop\\studia\\3rd semester\\CO\\project\\vs\\CO_project\\repo\\instances\\d_tough_choices.txt");
-	//istream* input = &file;// 
-	istream* input = &std::cin;
+    int popsize = 30;
+    sp->setPoolSize(3*popsize);
 
-    //if(){
-    //    std::cerr << "Can't open " << argv[1] <<'\n';
-    //    return 1;
-    //}
+    istream* input = &std::cin;
 
     int nOfBooks, nOfLibraries, nOfDays; // B L D
 	*input >> nOfBooks >> nOfLibraries >> nOfDays;
     Libraries::setL(nOfLibraries);
     Books::setB(nOfBooks);
-    //fscanf(instance," %i %i %i", &nOfBooks, &nOfLibraries, &nOfDays);
     
     long long scoresSum = readBooks(&books,*input,nOfBooks);
     
     readLibs(&libs, *input, nOfLibraries,nOfDays);
  
-    //probabilityEstimate(nOfBooks,nOfDays,nOfLibraries);
+    probabilityEstimate(nOfBooks,nOfDays,nOfLibraries);
 
-    Solution exampleSol = Solution(nOfBooks);
+    Solution exampleSol = Solution();
     exampleSol.constructGreedy(nOfDays,nOfBooks,nOfLibraries);
     exampleSol.evaluate(nOfDays, nOfBooks);
     long long int initialEval = exampleSol.getEvaluation();
-    GeneticAlgorithm alg = GeneticAlgorithm(200,nOfDays, nOfBooks,nOfLibraries,0.05,0.6);
-    //Solution allSol = Solution(0);
-    //for (int libId = 0; libId < nOfLibraries; libId++) {
-    //    allSol.addLibId(libId);
-    //}
-    //alg.initializePopulation(&allSol);
-    //Solution emptySol = Solution(nOfBooks);
-    //alg.initializePopulation(&emptySol,95);
-    //alg.initializePopulation(exampleSol.copy());
+    GeneticAlgorithm alg = GeneticAlgorithm(popsize,nOfDays, nOfBooks,nOfLibraries,0.2,0.5);
+
     alg.add(exampleSol.copy());
     alg.randomPopulation();
     alg.evolve(10000, 1000);
-    Solution* bestSol = alg.getBestSolution();
+    Solution* bestSol = alg.getBestSolution()->copy();
     long long int bestVal = bestSol->getEvaluation();
-    cout<< "solution eval: "<< bestSol->getEvaluation()<<endl;
-    cout<< "Solution value percentage: " << (double)bestVal / (double)scoresSum << '\n';//print to be deleted
-    cout << "Improvement: " << bestVal -initialEval << endl;
-    //std::cout << "Solution value percentage: " << (double)alg.evaluate(&exampleSol) / (double)scoresSum << '\n';
-    //
-    //exampleSol.print(nOfDays,nOfBooks); // only print the solution !!!!
-    //exampleSol.print(nOfDays,nOfBooks);
+    //cout<< "solution eval: "<< bestSol->getEvaluation()<<endl;
+    //cout<< "Solution value percentage: " << (double)bestVal / (double)scoresSum << '\n';//print to be deleted
+    //cout << "Improvement: " << bestVal -initialEval << endl;
+
+
+    exampleSol.print(nOfDays,nOfBooks); // only print the solution !!!!
     
 	
-    //file.close();
-    std::cout << "Elapsed time: " << timer.elapsedTime().count() << " seconds" << std::endl;// to be deleted
+    //std::cout << "Elapsed time: " << timer.elapsedTime().count() << " seconds" << std::endl;// to be deleted
 
-    //double len = 20;
-    //for (int val : *alg.bestValues) {
-    //    int squares = (int)(len*(double)val / bestVal);
-    //    for (int i = 0; i < squares;i++) {
-    //        std::cout << 'E';
-    //    }
-    //    std::cout << endl;
-    //}
-    //exampleSol.print(nOfDays, nOfBooks);
     books.clear();
     libs.clear();
     return 0;

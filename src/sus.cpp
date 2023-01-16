@@ -19,30 +19,32 @@ Population* SUSampling::sus(Population* pop, int size) {
 
 	double* points = new double[size]; // deleted in RWS function
 	for (int i = 0; i < size; i++) {
-		points[i] = start + i * pointerDistance;
+		points[i] = start + (i * pointerDistance);
 	}
 
 	return rouletteWheelSelection(pop,size,points);
 }
 
+unsigned int fitnessSum(Population* pop, int I) {
+	unsigned int fitnessSumToI = 0;
+	for (int i = 0; i < I;i++) {
+		Solution* sol = pop->at(i);
+		fitnessSumToI += sol->getEvaluation();
+	}
+	return fitnessSumToI;
+}
 
 Population* SUSampling::rouletteWheelSelection(Population* pop,int size, double* points) {
 	Population* keep = new Population();
 	
+	std::sort(pop->begin(), pop->end(), [](Solution* sol1, Solution* sol2) -> bool {return sol1->getEvaluation() > sol2->getEvaluation();});
 	for (int pI = 0; pI < size; pI++) {
 		double point = points[pI];
-		unsigned int I = 0;
-		unsigned int fitnessSumToI;
-		
+		int I = -1;
 		do {
-			fitnessSumToI = 0;
 			I++;
-
-			for (Solution* sol:*pop) {
-				fitnessSumToI += sol->getEvaluation();
-			}
-			keep->push_back(pop->at(I));
-		} while (fitnessSumToI < point);
+		} while (I + 1 < pop->size() && fitnessSum(pop, I+1) < point);
+		keep->push_back(pop->at(I));
 	}
 
 	delete[] points;

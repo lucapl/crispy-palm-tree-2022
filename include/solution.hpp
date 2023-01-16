@@ -8,13 +8,14 @@ class Solution {
 	private:
 		std::vector<int>* libraries; //combination of libraries IDs
 		std::set<int>* libsToConsider;
-		int* assignedIds; //array index = book id -> array value = library id
 		int nOfBooks;
 		int timeToRegister;
 		int evaluation; // value of a solution
 		bool inNew; // if it is new generation
 	public:
-		Solution(int);
+		bool returned;
+		Solution();
+		Solution(Solution* solToCopy);
 		~Solution();
 		//std::string* toString();
 
@@ -22,10 +23,8 @@ class Solution {
 		void mutateBooks();
 		Solution* crossWith(Solution*);
 
-		void assignBookToLib(int bookId, int libId);
 		void addLibId(int libId);
 		void removeLIbId(int libId);
-		void assignBooksInitially(int days,int bookCount);
 		void constructGreedy(int D,int B,int L);
 
 		// setters
@@ -36,7 +35,6 @@ class Solution {
 		// getters
 
 		std::vector<int>* getLibs();
-		int* getAssignedIds();
 		int getLibIdAssignedTo(int book);
 		int getEvaluation();
 		int getLibIdByIndex(int);
@@ -44,6 +42,7 @@ class Solution {
 		int getNumberOfBooks();
 		int getTimeToRegister();
 		bool isInNew();
+		std::set<int>* getLibsToConsider();
 
 		//used only for printing the final solution into standard output
 		void printSolution(int D, int B );
@@ -51,6 +50,8 @@ class Solution {
 
 		Solution* copy();
 		bool equals(Solution*);
+		void assignTo(Solution*);
+		void defaultState();
 		
 		void evaluate(int D, int B);
 };
