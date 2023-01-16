@@ -220,7 +220,7 @@ void Solution::print(int D, int B){
 	int M, T, N,bookID, remainingDays, bookIterator, booksInLib;
 	vector<int>bookQueue;
     bool* scanned = new bool[B]();
-    std::cout << getNOfLibraries() << endl;		
+    std::cout << getNumberOfLibs() << endl;		
 	for(int libId : *getLibs()){
         Library* lib = Libraries::getLibByID(libId);
 		bookIterator = 0;
