@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 14)
 project("co_project")
 
 file(GLOB co_SRC
-     "./src/*.hpp"
+     "./include/*.hpp"
      "./src/*.cpp"
 )
 
