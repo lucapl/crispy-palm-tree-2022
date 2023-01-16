@@ -3,10 +3,13 @@
 
 class Timer {
 	private:
-		static std::chrono::steady_clock::time_point start;
 		static std::chrono::seconds maxTime;
 	public:
-		static void setMaxTime(int seconds);
-		static std::chrono::seconds elapsedTime();
-		static bool shouldEnd();
+		std::chrono::_V2::steady_clock::time_point start;
+//		Timer():start(std::chrono::_V2::steady_clock::now()){};
+		//static void setStart();
+		static Timer* getInstance();
+		void setMaxTime(int seconds);
+		std::chrono::seconds elapsedTime();
+		bool shouldEnd();
 };
