@@ -10,6 +10,10 @@ static Library** generateLibs(){
 
 Library** Libraries::libs = generateLibs();
 float* Libraries::estimatedValues = new float[100000];
+unsigned int Libraries::L = 0;
+float Libraries::averageMaxScanned = 0;
+float Libraries::averageSignupTime = 0;
+double Libraries::loss = 0;
 
 Library* Libraries::getLibByID(int index){
     if(index < 0){
@@ -18,10 +22,11 @@ Library* Libraries::getLibByID(int index){
     return libs[index];
 }
 
-void Libraries::modifyLib(int id,int aTime, int aMaxScanned, int NofBooks){
+void Libraries::modifyLib(int id,int nOfBooksInLibs,int aTime, int aMaxScanned){
     libs[id]->setT(aTime);
     libs[id]->setM(aMaxScanned);
-    libs[id]->setNofBooks(NofBooks);
+    libs[id]->setN(nOfBooksInLibs);
+    libs[id]->initializeBooks(nOfBooksInLibs);
 }
 
 void Libraries::addBook(int libId,int bookId){
@@ -45,4 +50,33 @@ void Libraries::setEstimatedValue(int libId, float value) {
 
 bool Libraries::compareByEstimatedValue(const int libId1,const int libId2) {
     return getEstimatedValue(libId1) < getEstimatedValue(libId2);
+}
+
+unsigned int Libraries::getL() {
+    return L;
+}
+void Libraries::setL(unsigned int l) {
+    L = l;
+}
+
+
+//stat getters/setters
+
+float Libraries::getAverageM() {
+    return averageMaxScanned;
+}
+void Libraries::setAverageM(float avgM) {
+    averageMaxScanned = avgM;
+}
+float Libraries::getAverageT() {
+    return averageSignupTime;
+}
+void Libraries::setAverageT(float avgT) {
+    averageSignupTime = avgT;
+}
+double Libraries::getLoss() {
+    return loss;
+}
+void Libraries::setLoss(double newLoss){
+    loss = newLoss;
 }

@@ -2,8 +2,7 @@
 #include "books.hpp"
 #include "clustering.hpp"
 
-float Clustering::distance(Library* A, Library* B)
-{           
+float Clustering::distance(Library* A, Library* B){
             int SimmilarBooks = 0;
 			int a = 0;
 			int b = 0;

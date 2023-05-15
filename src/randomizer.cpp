@@ -26,17 +26,42 @@ Real Randomizer::getRandomReal(Real a, Real b) {
 }
 
 template<typename Int>
-Int Randomizer::getRandomInt(Int a, Int b) {
+Int Randomizer::getRandomInt(Int a, Int b) { // closed interval [a,b]
     std::uniform_int_distribution<Int> dist(a, b);
     return dist(generator);
+}
+
+// shuffling using Fisher-Yates algorithm - O(n)
+// too long for selection
+template<typename Container>
+void Randomizer::shuffle(Container cont, int n) {
+    for (int i = n - 1;i >= 1;i--) {
+        int j = getRandomInt<>(0, i);
+        std::swap(cont[i],cont[j]);
+        /*auto temp = cont[i];
+        cont[i] = cont[j];
+        cont[j] = temp;*/
+    }
+}
+
+std::set<int>::iterator Randomizer::randomFromSet(std::set<int>* set) {
+    int k = getRandomInt<>(0, (int)set->size() - 1);
+    std::set<int>::iterator it = set->begin();
+    std::advance(it, k);
+    return it;
 }
 
 Randomizer::Randomizer() {}
 
 
 template int Randomizer::getRandomInt(int, int);
+template unsigned int Randomizer::getRandomInt(unsigned int, unsigned int);
 template float Randomizer::getRandomReal(float, float);
+template double Randomizer::getRandomReal(double, double);
 template std::string Randomizer::choose<std::string>(std::string* array, int n);
 template std::string* Randomizer::choose<std::string*>(std::vector<std::string*>& vector, int n);
-using Generation = std::vector<Solution*>;
-template Solution* Randomizer::choose<Solution*>(Generation&, int);
+using Population = std::vector<Solution*>;
+template Solution* Randomizer::choose<Solution*>(Population&, int);
+template int Randomizer::choose<int>(std::vector<int>&, int);
+template void Randomizer::shuffle<>(Population&, int);
+template void Randomizer::shuffle<>(int*, int);
